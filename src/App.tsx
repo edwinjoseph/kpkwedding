@@ -1,4 +1,5 @@
 import Hero from './components/Hero';
+import Agenda from './components/Agenda';
 
 const App = () => (
     <>
@@ -10,6 +11,7 @@ const App = () => (
         </header>
         <main className="mt-[72px] px-4 md:px-10">
             <Hero />
+            <Agenda />
         </main>
     </>
 );

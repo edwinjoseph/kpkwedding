@@ -7,7 +7,11 @@ module.exports = {
       heading: ['"Playfair Display"', 'serif'],
       body: ['Montserrat', 'sans-serif'],
     },
-    extend: {},
+    extend: {
+      colors: {
+        pink: '#D98E92'
+      }
+    },
   },
   plugins: [],
 }
