@@ -10,18 +10,20 @@ const LearnMoreIcon = (props) => {
                   35,35 0 1,1 -90,0
                 "
             />
-            <text className="animate-spin-slow origin-center">
-                <textPath
-                    href="#circlePath"
-                    textLength={Math.floor(Math.PI * 90 - text.length)}
-                    font-family="Montserrat"
-                    font-size="16"
-                    font-weight="bold"
-                    className="uppercase"
-                    fill="#555555">
-                    {text}
-                </textPath>
-            </text>
+            <g className="animate-spin-slow origin-center">
+                <text>
+                    <textPath
+                        href="#circlePath"
+                        textLength={Math.floor(Math.PI * 90 - text.length)}
+                        font-family="Montserrat"
+                        font-size="16"
+                        font-weight="bold"
+                        className="uppercase"
+                        fill="#555555">
+                        {text}
+                    </textPath>
+                </text>
+            </g>
             <path d="M74.5 57L60 72L45.5 57" stroke="black" stroke-width="4"/>
             <rect x="58.5" y="45.5" width="3" height="25" fill="black" stroke="black"/>
         </svg>
