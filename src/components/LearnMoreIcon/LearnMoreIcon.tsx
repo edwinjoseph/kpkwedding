@@ -10,7 +10,7 @@ const LearnMoreIcon = (props) => {
                   35,35 0 1,1 -90,0
                 "
             />
-            <text>
+            <text className="motion-safe:animate-spin-slow origin-center">
                 <textPath
                     href="#circlePath"
                     textLength={Math.floor(Math.PI * 90 - text.length)}
