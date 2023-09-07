@@ -1,5 +1,6 @@
 import Hero from './components/Hero';
 import Agenda from './components/Agenda';
+import Locations from './components/Locations';
 
 const App = () => (
     <>
@@ -9,9 +10,10 @@ const App = () => (
                 <p className="uppercase font-bold tracking-[3px] md:tracking-[4px] before:content-['16.08.24'] md:before:content-['16_august_2024']" />
             </div>
         </header>
-        <main className="mt-[72px] px-4 md:px-10">
+        <main className="mt-[72px]">
             <Hero />
             <Agenda />
+            <Locations />
         </main>
     </>
 );
