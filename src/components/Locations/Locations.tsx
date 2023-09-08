@@ -4,7 +4,7 @@ import LocationCard from './LocationCard';
 const Locations = () => (
     <Section className="relative bg-slate-700 bg-[url('/assets/map-mobile.jpg')] md:bg-[url('/assets/map.jpg')] bg-cover bg-center py-10 before:content-[''] before:w-full before:h-full before:absolute before:top-0 before:left-0 before:bg-gradient-to-b before:from-white before:to-transparent">
         <Section.Container>
-            <div className="relative flex items-center gap-10 flex-col md:flex-row md:gap-20 md:justify-center">
+            <div className="relative flex items-center gap-10 flex-col md:flex-row md:gap-15 md:justify-center lg:gap-20">
                 <LocationCard
                     image="/assets/asylum-chapel.jpg"
                     title="The Ceremony"
