@@ -7,7 +7,7 @@ const Section = ({ children, className }) => (
 );
 
 Section.Container = ({ children }) => (
-    <div className="px-4 md:px-10 max-w-[1369px] mx-auto">
+    <div className="px-4 md:px-10 max-w-[1440px] mx-auto">
         {children}
     </div>
 );
