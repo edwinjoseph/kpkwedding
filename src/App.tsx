@@ -3,6 +3,7 @@ import Agenda from './components/Agenda';
 import Locations from './components/Locations';
 import Gallery from './components/Gallery';
 import FAQs from './components/FAQs';
+import Final from './components/Final';
 
 const App = () => (
     <>
@@ -18,6 +19,7 @@ const App = () => (
             <Locations />
             <Gallery />
             <FAQs />
+            <Final />
         </main>
     </>
 );
