@@ -2,6 +2,7 @@ import Hero from './components/Hero';
 import Agenda from './components/Agenda';
 import Locations from './components/Locations';
 import Gallery from './components/Gallery';
+import FAQs from './components/FAQs';
 
 const App = () => (
     <>
@@ -16,6 +17,7 @@ const App = () => (
             <Agenda />
             <Locations />
             <Gallery />
+            <FAQs />
         </main>
     </>
 );

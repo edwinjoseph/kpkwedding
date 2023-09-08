@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "classnames": "^2.3.2",
-    "solid-js": "^1.7.6"
+    "solid-collapse": "^1.1.0",
+    "solid-js": "^1.7.6",
+    "solid-markdown": "^1.2.2"
   }
 }

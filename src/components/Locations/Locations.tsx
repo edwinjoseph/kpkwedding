@@ -10,14 +10,14 @@ const Locations = () => (
                     title="The Ceremony"
                     name="The Asylum Chapel"
                     address={["Caroline Gardens, Asylum Rd", "London SE15 2SQ" ]}
-                    url="https://www.google.com/maps/dir/?api=1&destination=Asylum+Chapel,+Caroline+Gardens,+Asylum+Rd,+London+SE15+2SQ"
+                    url="https://www.google.com/maps/dir/?api=1&destination=Asylum+Chapel,+Caroline+Gardens,+Asylum+Rd,+London+SE15+2SQ&travelmode=transit"
                 />
                 <LocationCard
                     image="/assets/lordship-pub.jpg"
                     title="The reception"
                     name="The Lordship Pub"
                     address={["211 Lordship Ln", "London SE22 8HA" ]}
-                    url="https://www.google.com/maps/dir/?api=1&destination=The+Lordship+Pub,+211+Lordship+Ln,+London+SE22+8HA/"
+                    url="https://www.google.com/maps/dir/?api=1&destination=The+Lordship+Pub,+211+Lordship+Ln,+London+SE22+8HA&travelmode=transit"
                 />
             </div>
         </Section.Container>

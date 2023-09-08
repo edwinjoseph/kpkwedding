@@ -4,10 +4,7 @@ import Section from '../Section';
 const Agenda = () => (
     <Section>
         <Section.Container>
-            <h2 className="font-heading text-center mb-[64px] text-[32px] md:mb-[80px] md:text-[64px]">
-                <span className="font-body uppercase block text-[14px] mb-[16px] md:text-xl md:mb-[24px] font-bold tracking-[5px] text-pink">Friday, 16 August 2024</span>
-                Order of the day
-            </h2>
+            <Section.Title text="Order of the day" subtitle="Friday, 16 August 2024" />
             <div className="flex flex-col gap-[40px] md:gap-[64px]">
                 <AgendaItem subtitle="Midday" title="Arrive at Asylum Chapel" />
                 <AgendaItem subtitle="12.30pm" title="“We do”" />
