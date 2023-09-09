@@ -1,6 +1,6 @@
+import { createSignal, For } from 'solid-js';
 import Section from '../Section';
 import FAQItem from './FAQItem';
-import { createSignal } from 'solid-js';
 
 const FAQs = () => {
     const [activeAccordion, setActiveAccordion] = createSignal<string | null>(null);
@@ -78,7 +78,7 @@ const FAQs = () => {
         <Section>
             <Section.Container>
                 <Section.Title text="FAQs" />
-                <div className="max-w-[680px] mx-auto">
+                <div class="max-w-[680px] mx-auto">
                     <For each={questions}>
                         {(question) => (
                             <FAQItem

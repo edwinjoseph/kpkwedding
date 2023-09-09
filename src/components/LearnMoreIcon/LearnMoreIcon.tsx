@@ -1,4 +1,10 @@
-const LearnMoreIcon = (props) => {
+import {JSX} from 'solid-js';
+
+export interface LearnMoreIconProps extends JSX.DOMAttributes<SVGSVGElement> {
+    class?: string;
+}
+
+const LearnMoreIcon = (props: LearnMoreIconProps) => {
     const text = 'Scroll to learn more';
     return (
         <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -10,15 +16,15 @@ const LearnMoreIcon = (props) => {
                   35,35 0 1,1 -90,0
                 "
             />
-            <g className="motion-safe:animate-spin-slow origin-center">
+            <g class="motion-safe:animate-spin-slow origin-center">
                 <text>
                     <textPath
                         href="#circlePath"
-                        textLength={Math.floor(Math.PI * 90 - text.length)}
+                        text-length={Math.floor(Math.PI * 90 - text.length)}
                         font-family="Montserrat"
                         font-size="16"
                         font-weight="bold"
-                        className="uppercase"
+                        class="uppercase"
                         fill="#555555">
                         {text}
                     </textPath>
