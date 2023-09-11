@@ -8,7 +8,10 @@ type SectionComponent = Component<{ children: JSXElement, class?: string }> & {
 };
 
 const Section: SectionComponent = (props) => (
-    <section class={cx('my-20 md:my-[120px] first:mt-0 last:mb-0', props.class)}>
+    <section class={cx('my-20 md:my-[120px]', props.class, {
+        'first:mt-0': !props.class?.includes('mt-'),
+        'last:mb-0': !props.class?.includes('mb-')
+    })}>
         {props.children}
     </section>
 );
