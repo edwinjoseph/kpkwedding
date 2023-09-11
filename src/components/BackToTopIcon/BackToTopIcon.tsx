@@ -20,7 +20,8 @@ const BackToTopIcon = (props: BackToTopIconProps) => {
                 {[...new Array(2)].map((_, index) => (
                     <textPath
                         href="#circlePath"
-                        text-length={Math.floor(Math.PI * 45 - text.length)}
+                        // @ts-ignore
+                        textLength={Math.floor(Math.PI * 45 - text.length)}
                         startOffset={Math.floor(Math.PI * 45) * index}
                         font-family="Montserrat"
                         font-size="16"

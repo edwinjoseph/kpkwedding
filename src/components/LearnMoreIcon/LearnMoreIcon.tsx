@@ -1,4 +1,4 @@
-import {JSX} from 'solid-js';
+import { JSX } from 'solid-js';
 
 export interface LearnMoreIconProps extends JSX.DOMAttributes<SVGSVGElement> {
     class?: string;
@@ -20,7 +20,8 @@ const LearnMoreIcon = (props: LearnMoreIconProps) => {
                 <text>
                     <textPath
                         href="#circlePath"
-                        text-length={Math.floor(Math.PI * 90 - text.length)}
+                        // @ts-ignore
+                        textLength={Math.floor(Math.PI * 90 - text.length)}
                         font-family="Montserrat"
                         font-size="16"
                         font-weight="bold"
