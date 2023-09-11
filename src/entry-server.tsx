@@ -18,13 +18,18 @@ const handleProtectedPaths: Middleware = ({ forward }) => async (event) => {
 
     const { data } = await superbase(event.request).auth.getSession();
     const isAuthenticated = Boolean(data.session?.access_token);
+    const isAdmin = data.session?.user?.app_metadata?.userrole === 'webadmin';
 
-    if (isLoginRoute && isAuthenticated) {
-        return redirect('/admin');
+    if (!isAuthenticated && !isLoginRoute) {
+        return redirect('/login');
     }
 
-    if (isAdminRoute && !isAuthenticated) {
-        return redirect('/login');
+    if (isAuthenticated && isLoginRoute) {
+        return redirect(isAdmin ? '/admin' : '/');
+    }
+
+    if (isAuthenticated && isAdminRoute && !isAdmin) {
+        return redirect('/');
     }
 
     return forward(event);
