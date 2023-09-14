@@ -77,7 +77,7 @@ const FAQs = () => {
     return (
         <Section>
             <Section.Container>
-                <Section.Title text="FAQs" />
+                <Section.Title text="FAQs" centered />
                 <div class="max-w-[680px] mx-auto">
                     <For each={questions}>
                         {(question) => (

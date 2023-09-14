@@ -74,7 +74,7 @@ const Login = () => {
         <>
             <section class="bg-[#e8e8e8] h-screen flex justify-center flex-col px-[16px]">
                 <div class="max-w-[400px] w-full mx-auto">
-                    <div class="px-[24px] py-[32px] bg-white">
+                    <div class="px-[24px] py-[32px] bg-white rounded-md">
                         {submissionNotification() !== null && (
                             <div class={submissionNotification()!.type === 'error' ? 'px-[16px] py-[12px] mb-4 bg-red-200 text-red-700 text-medium' : ''}>
                                 <RichText content={submissionNotification()!.text} />

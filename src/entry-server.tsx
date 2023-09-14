@@ -12,7 +12,7 @@ const handleProtectedPaths: Middleware = ({ forward }) => async (event) => {
     const isLoginRoute = url.pathname === '/login';
     const isAdminRoute = url.pathname.startsWith('/admin');
 
-    if (!isLoginRoute && !isAdminRoute) {
+    if ((!isLoginRoute && !isAdminRoute)) {
         return forward(event);
     }
 
