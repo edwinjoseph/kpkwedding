@@ -11,6 +11,13 @@ const RichText = (props: RichTextProps) => (
         class={props.class}
         children={props.content.join('\n\n')}
         components={{
+            p: ({ children, class: className, node: _node, ...props }) => (
+                <p
+                    {...props}
+                    class={cx('pb-2 last:pb-0', className)}>
+                    {children}
+                </p>
+            ),
             a: ({ children, class: className, node: _node, href, ...props }) => (
                 <a
                     {...props}
