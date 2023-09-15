@@ -9,7 +9,7 @@ export interface LocationCardProps {
 const LocationCard = ({ image, title, name, address, url }: LocationCardProps) => (
     <div class="bg-white w-full max-w-[488px]">
         <div class="relative aspect-[343/160] md:aspect-[488/255] overflow-hidden">
-            <img src={image} alt={`Image of ${name}`} class="absolute w-auto h-full top-0 left-1/2 -translate-x-1/2" loading="lazy" />
+            <img src={image} alt={`Image of ${name}`} class="absolute object-cover top-0 left-1/2 -translate-x-1/2" loading="lazy" />
         </div>
         <div class="px-4 py-6 md:pt-10 md:pb-8">
             <h2 class="uppercase text-pink mb-4 text-xs font-bold text-center tracking-[3px] md:text-base md:tracking-[4px]">{title}</h2>
