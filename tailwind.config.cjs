@@ -12,7 +12,7 @@ module.exports = {
         pink: '#D98E92'
       },
       animation: {
-        'spin-slow': 'spin 20s linear infinite',
+        'spin-slow': 'spin 30s linear infinite',
       },
       transitionProperty: {
         height: 'height',
