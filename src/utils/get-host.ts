@@ -1,3 +1,5 @@
+export const allowedHosts = [import.meta.env.VITE_SITE_URL, import.meta.env.VITE_VERCEL_URL, 'http://localhost:3000/'];
+
 const getHost = () => {
     let url =
         import.meta.env.VITE_SITE_URL ?? // Set this to your site URL in production env.

@@ -6,7 +6,22 @@ import {
     Middleware,
 } from "solid-start/entry-server";
 import superbase from '@lib/supabase/server';
+import getHost, { allowedHosts } from '@utils/get-host';
 
+const enableCors: Middleware = ({ forward }) => async (event) => {
+    const url = new URL(event.request.url);
+    const response = await forward(event);
+
+    if (url.pathname.startsWith('/api')) {
+        if (allowedHosts.includes(url.origin) || allowedHosts.includes(url.host)) {
+            response.headers.append('Access-Control-Allow-Origin', getHost());
+        }
+        response.headers.append('Access-Control-Allow-Credentials', 'true');
+        response.headers.append('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+    }
+
+    return response;
+}
 const handleProtectedPaths: Middleware = ({ forward }) => async (event) => {
     const url = new URL(event.request.url);
     const isLoginRoute = url.pathname === '/login';
@@ -36,6 +51,7 @@ const handleProtectedPaths: Middleware = ({ forward }) => async (event) => {
 }
 
 export default createHandler(
+    enableCors,
     handleProtectedPaths,
     renderAsync((event) => <StartServer event={event} />)
 );
