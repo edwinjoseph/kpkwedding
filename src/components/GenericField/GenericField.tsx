@@ -1,5 +1,6 @@
 import { splitProps, Component, JSX } from 'solid-js';
 import cx from 'classnames';
+import GenericInput from '@components/GenericInput';
 
 type GenericFieldProps = {
     name: string;
@@ -25,16 +26,9 @@ const GenericField: Component<GenericFieldProps> = (props) => {
                     {props.label}
                 </label>
             )}
-            <input
+            <GenericInput
                 {...inputProps}
-                class={cx('w-full py-[12px] px-[20px] bg-white border border-[#CBCBCB] outline-none focus:border-[#D98E92]', {
-                    'border-[#F11A41] focus:border-[#F11A41]': !!props.error,
-                    'border-[#000]': !!props.value && !props.error,
-                })}
-                id={props.name}
-                value={props.value || ''}
-                aria-invalid={!!props.error}
-                aria-errormessage={`${props.name}-error`}
+                hasError={!!props.error}
             />
             {props.error && <div id={`${props.name}-error`} class="text-[#F11A41] font-medium mt-1">{props.error}</div>}
         </div>

@@ -8,7 +8,7 @@ const addMillisecondsToDate = (date: Date, milliseconds: number): Date => {
     return newDate;
 }
 
-const setCookieHeaders = (session: Session | null, expired = false): HeadersInit | null => {
+const setCookieHeaders = (session: Session | null, expired = false): [string, string][] | null => {
     if (!session && !expired) {
         return null;
     }
