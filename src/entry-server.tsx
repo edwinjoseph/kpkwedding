@@ -18,6 +18,7 @@ const enableCors: Middleware = ({ forward }) => async (event) => {
         }
         response.headers.append('Access-Control-Allow-Credentials', 'true');
         response.headers.append('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+        response.headers.append('Cache-Control', 'no-store, max-age=0');
     }
 
     return response;
@@ -48,7 +49,11 @@ const handleProtectedPaths: Middleware = ({ forward }) => async (event) => {
         return redirect('/');
     }
 
-    return forward(event);
+    const response = await forward(event);
+
+    response.headers.append('Cache-Control', 'private, max-age=300, must-revalidate');
+
+    return response;
 }
 
 export default createHandler(
