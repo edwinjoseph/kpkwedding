@@ -1,6 +1,7 @@
 import Section from '@components/Section';
-import { For, Show } from 'solid-js';
+import { createSignal, For, Show } from 'solid-js';
 import SubmitButton from '@components/SubmitButton';
+import InviteModal from '@components/Admin/InviteModal';
 import { invites } from '../../stub/invites';
 
 interface StatusCardProps {
@@ -52,16 +53,18 @@ const InviteCard = (props: InviteCardProps) => (
 )
 
 const Admin = () => {
+    const [ showInviteModal, setShowInviteModal ] = createSignal<boolean>(false)
     const unconfirmed = invites.filter(invite => !invite.responded);
     const attending = invites.filter(invite => invite.responded && invite.canMakeIt);
     const declined = invites.filter(invite => invite.responded && !invite.canMakeIt);
+
     return (
         <main class="min-h-screen bg-gray-100 overflow-hidden">
             <Section class="my-6 md:my-8">
                 <Section.Container>
                     <div class="flex justify-between items-center mt-[24px] mb-[24px]">
                         <Section.Title heading="h1" text="Dashboard" class="mb-0 md:mb-0" />
-                        <SubmitButton text="Add an invite" class="text-[14px]" />
+                        <SubmitButton text="Add an invite" class="text-[14px]" onClick={() => setShowInviteModal(true)} />
                     </div>
                     <div class="grid gap-4 grid-cols-2 md:grid-cols-4">
                         <StatusCard count={invites.length} label="Invited" />
@@ -84,7 +87,6 @@ const Admin = () => {
                     <div class="pb-[16px] mb-[16px]">
                         <div>
                             <h2 class="font-bold md:text-2xl">Attending</h2>
-                            <div></div>
                         </div>
                         <For each={attending}>
                             {(invite) => (
@@ -102,6 +104,7 @@ const Admin = () => {
                     </div>
                 </Section.Container>
             </Section>
+            <InviteModal isOpen={showInviteModal()} closeModal={() => setShowInviteModal(false)} />
         </main>
     );
 }

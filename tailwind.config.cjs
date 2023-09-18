@@ -9,7 +9,8 @@ module.exports = {
     },
     extend: {
       colors: {
-        pink: '#D98E92'
+        pink: '#D98E92',
+        'pink-dark': '#BA7C7F'
       },
       animation: {
         'spin-slow': 'spin 10s linear infinite',

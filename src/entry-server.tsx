@@ -22,12 +22,13 @@ const enableCors: Middleware = ({ forward }) => async (event) => {
 
     return response;
 }
+
 const handleProtectedPaths: Middleware = ({ forward }) => async (event) => {
     const url = new URL(event.request.url);
     const isLoginRoute = url.pathname === '/login';
     const isAdminRoute = url.pathname.startsWith('/admin');
 
-    if ((!isLoginRoute && !isAdminRoute)) {
+    if ((!isLoginRoute && !isAdminRoute) || getHost() === 'http://localhost:3000/') {
         return forward(event);
     }
 

@@ -1,8 +1,16 @@
 import {Component} from 'solid-js';
 import cx from 'classnames';
 
-const SubmitButton: Component<{ text: string, class?: string }> = ({ text, ...props }) => (
-    <button type="submit" class={cx('px-[24px] py-[16px] bg-[#D98E92] uppercase font-bold text-white outline-none hover:bg-[#BA7C7F] focus:bg-[#BA7C7F]', props.class)}>{text}</button>
+const SubmitButton: Component<{ text: string, class?: string; alt?: boolean, onClick?: () => any | Promise<any> }> = (props) => (
+    <button
+        type={props.onClick ? 'button' : 'submit'}
+        class={cx('px-[24px] py-[16px] uppercase font-bold outline-none ', {
+            'bg-pink text-white hover:bg-pink-dark focus:bg-pink-dark': !props.alt,
+            'border-[2px] border-pink text-pink hover:border-pink-dark hover:text-pink-dark focus:border-pink-dark focus:text-pink-dark': props.alt,
+        }, props.class)}
+        onClick={props.onClick}>
+        {props.text}
+    </button>
 );
 
 export default SubmitButton;
