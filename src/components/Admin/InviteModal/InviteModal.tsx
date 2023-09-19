@@ -84,7 +84,7 @@ const InviteModal = (props: InviteModalProps) => {
     });
 
     const handleInviteSubmit: SubmitHandler<InviteFormType> = async (formValues) => {
-        const response = await fetch(new URL('/api/invite', getHost()).toString(), {
+        const response = await fetch(new URL('/api/invites', getHost()).toString(), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

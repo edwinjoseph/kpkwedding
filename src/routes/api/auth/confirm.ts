@@ -1,26 +1,27 @@
-import { APIEvent, redirect, json } from 'solid-start';
+import {APIEvent, json, redirect} from 'solid-start';
 import supabase from '@lib/supabase/server';
 import setCookieHeaders from '@utils/set-cookie-headers';
 import getHost from '@utils/get-host';
+import {appendCodeToUrl, ErrorCodes, respondWithAPIError} from '@utils/error-codes';
 
 export async function GET({ request }: APIEvent) {
     const { searchParams } = new URL(request.url)
     const token_hash = searchParams.get('token_hash');
 
     if (!token_hash) {
-        return redirect(new URL(`/login?error=0001`, getHost()).toString());
+        return redirect(appendCodeToUrl('/login', ErrorCodes.AUTH_MISSING_TOKEN_HASH));
     }
 
     const { data, error } = await supabase(request).auth.verifyOtp({ token_hash, type: 'email' });
 
     if (error) {
-        return redirect(new URL(`/login?error=0003`, getHost()).toString());
+        return redirect(appendCodeToUrl('/login', ErrorCodes.AUTH_UNABLE_TO_AUTHORISE));
     }
 
     const cookieHeaders = setCookieHeaders(data.session)
 
     if (!cookieHeaders) {
-        return redirect(new URL(`/login?error=0004`, getHost()).toString());
+        return redirect(appendCodeToUrl('/login', ErrorCodes.AUTH_FAILED_TO_SET_HEADERS));
     }
 
     return redirect(new URL(`/admin`, getHost()).toString(), {
@@ -32,11 +33,7 @@ export async function POST({ request }: APIEvent) {
     const body = await new Response(request.body).json();
 
     if (!body.email && !body.code) {
-        return json({
-            error: {
-                code: '0002'
-            }
-        }, 401)
+        return respondWithAPIError(ErrorCodes.AUTH_MISSING_OTP_CREDENTIALS);
     }
 
     const { data, error } = await supabase(request).auth.verifyOtp({
@@ -46,21 +43,13 @@ export async function POST({ request }: APIEvent) {
     });
 
     if (error) {
-        return json({
-            error: {
-                code: '0003'
-            }
-        }, 401)
+        return respondWithAPIError(ErrorCodes.AUTH_UNABLE_TO_AUTHORISE);
     }
 
     const cookieHeaders = setCookieHeaders(data.session);
 
     if (!cookieHeaders) {
-        return json({
-            error: {
-                code: '0004'
-            }
-        }, 401)
+        return respondWithAPIError(ErrorCodes.AUTH_FAILED_TO_SET_HEADERS);
     }
 
     return json({ ok: true }, {

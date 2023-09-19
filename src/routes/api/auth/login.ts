@@ -1,5 +1,6 @@
-import { json, APIEvent } from "solid-start";
+import { APIEvent, json } from "solid-start";
 import supabase from '@lib/supabase/server';
+import { ErrorCodes, respondWithAPIError } from '@utils/error-codes';
 
 export async function POST({ request }: APIEvent) {
     const body = await new Response(request.body).json();
@@ -12,11 +13,7 @@ export async function POST({ request }: APIEvent) {
     });
 
     if (error) {
-        return json({
-            error: {
-                code: '9999'
-            }
-        }, 401);
+        return respondWithAPIError(ErrorCodes.AUTH_UNABLE_TO_LOGIN);
     }
 
     return json({ ok: true })

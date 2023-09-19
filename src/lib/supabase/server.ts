@@ -1,6 +1,7 @@
 import { createServerClient, isBrowser } from '@supabase/ssr';
 import Cookies from 'universal-cookie';
-import {AUTH_TOKEN_COOKIE_NAME} from '@utils/set-cookie-headers';
+import { Database } from '@lib/supabase/database.types';
+import { AUTH_TOKEN_COOKIE_NAME } from '@utils/set-cookie-headers';
 
 const initialiseSBServer = (req: Request) => {
     if (isBrowser()) {
@@ -9,7 +10,7 @@ const initialiseSBServer = (req: Request) => {
 
     const cookies = new Cookies(req.headers.get('Cookie'));
 
-    return createServerClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY, {
+    return createServerClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {
         cookies,
         auth: {
             flowType: 'pkce',
