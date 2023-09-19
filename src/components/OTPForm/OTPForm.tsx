@@ -39,7 +39,7 @@ const OTPForm = ({ email, onSubmit, onGlobalError }: OTPFormProps) => {
             return;
         }
 
-        if (event.key === 'v' && event.metaKey) {
+        if (event.key === 'v' && (event.ctrlKey || event.metaKey)) {
             return;
         }
 
