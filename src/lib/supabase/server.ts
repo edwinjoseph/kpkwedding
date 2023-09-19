@@ -10,11 +10,13 @@ const initialiseSBServer = (req: Request) => {
 
     const cookies = new Cookies(req.headers.get('Cookie'));
 
-    return createServerClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {
+    return createServerClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
         cookies,
         auth: {
             flowType: 'pkce',
             storageKey: AUTH_TOKEN_COOKIE_NAME,
+            autoRefreshToken: false,
+            persistSession: false,
         }
     });
 }
