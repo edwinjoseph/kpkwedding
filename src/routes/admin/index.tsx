@@ -1,62 +1,50 @@
+import { createSignal, For, Show} from 'solid-js';
+import { useRouteData } from '@solidjs/router';
+import { createServerData$ } from 'solid-start/server';
+import getHost from '@utils/get-host';
+import { ClientInvite, ClientUser, InvitedTo } from '@lib/supabase/invites';
 import Section from '@components/Section';
-import { createSignal, For, Show } from 'solid-js';
 import SubmitButton from '@components/SubmitButton';
 import InviteModal from '@components/Admin/InviteModal';
-import { invites } from '../../stub/invites';
+import StatusCard from '@components/Admin/StatusCard';
+import UserCard from '@components/Admin/UserCard/UserCard';
 
-interface StatusCardProps {
-    count: number;
-    label: string;
+interface UserListItem extends ClientUser {
+    inviteId: string;
+    invitedTo: InvitedTo;
 }
 
-const StatusCard = (props: StatusCardProps) => (
-    <div class="bg-white text-center aspect-[2/1] flex flex-col justify-center items-center shadow rounded-md">
-        <h2 class="text-2xl font-bold lg:text-4xl lg:mb-2">{props.count}</h2>
-        <p class="text-sm font-semibold lg:text-xl uppercase text-gray-600">{props.label}</p>
-    </div>
-);
+export function routeData() {
+    return createServerData$(async (_, event) => {
+        const response = await fetch(new URL('/api/invites', getHost()).toString(), {
+            headers: [
+                ['Cookie', event.request.headers.get('cookie') || '']
+            ]
+        });
 
-interface InviteCardProps {
-    firstName: string;
-    lastName: string;
-    dietaryOptions: null | {
-        isVegan: boolean;
-        isVegetarian: boolean;
-        noNuts: boolean;
-        noDairy: boolean;
-        noGluten: boolean;
-        other: null | string;
-    }
+        const invites: Array<ClientInvite> = await response.json();
+
+        return invites.reduce<Array<UserListItem>>((acc, invite) => {
+            invite.users.forEach(user => {
+                acc.push({
+                    ...user,
+                    inviteId: invite.id,
+                    invitedTo: invite.invitedTo,
+                });
+            })
+
+            return acc;
+        }, [])
+    }, { key: ['invites'], initialValue: [], ssrLoadFrom: 'server' })
 }
-
-const InviteCard = (props: InviteCardProps) => (
-    <div class="flex justify-between items-center py-[18px] px-[16px] bg-white my-[20px] first:mt-0 last:mb-0 shadow rounded-md">
-        <h3 class="font-semibold">{props.firstName} {props.lastName}</h3>
-        <div class="flex gap-3">
-            <Show when={props.dietaryOptions?.isVegan}>
-                <img src="/assets/vegan.gif" alt="Vegan" title="Vegan" width="35px"/>
-            </Show>
-            <Show when={props.dietaryOptions?.isVegetarian}>
-                <img src="/assets/vegetarian.gif" alt="Vegetarian" title="Vegetarian" width="35px" />
-            </Show>
-            <Show when={props.dietaryOptions?.noNuts}>
-                <img src="/assets/no-nuts.gif" alt="No nuts" title="No nuts" width="35px" />
-            </Show>
-            <Show when={props.dietaryOptions?.noDairy}>
-                <img src="/assets/no-dairy.gif" alt="No dairy" title="No dairy" width="35px" />
-            </Show>
-            <Show when={props.dietaryOptions?.noGluten}>
-                <img src="/assets/no-gluten.gif" alt="No gluten" title="No gluten" width="35px" />
-            </Show>
-        </div>
-    </div>
-)
 
 const Admin = () => {
-    const [ showInviteModal, setShowInviteModal ] = createSignal<boolean>(false)
-    const unconfirmed = invites.filter(invite => !invite.responded);
-    const attending = invites.filter(invite => invite.responded && invite.canMakeIt);
-    const declined = invites.filter(invite => invite.responded && !invite.canMakeIt);
+    const data = useRouteData<typeof routeData>();
+    const getUnconfirmed = () => data()!.filter(invite => invite.response === null);
+    const getAttending = () => data()!.filter(invite => invite.response && invite.isComing);
+    const getDeclined = () => data()!.filter(invite => invite.response && !invite.isComing);
+
+    const [ showInviteModal, setShowInviteModal ] = createSignal<boolean>(false);
 
     return (
         <main class="min-h-screen bg-gray-100 overflow-hidden">
@@ -64,44 +52,60 @@ const Admin = () => {
                 <Section.Container>
                     <div class="flex justify-between items-center mt-[24px] mb-[24px]">
                         <Section.Title heading="h1" text="Dashboard" class="mb-0 md:mb-0" />
-                        <SubmitButton text="Add an invite" class="text-[14px]" onClick={() => setShowInviteModal(true)} />
+                        <Show when={data()!.length > 0}>
+                            <SubmitButton text="Add an invite" class="text-[14px]" onClick={() => setShowInviteModal(true)} />
+                        </Show>
                     </div>
                     <div class="grid gap-4 grid-cols-2 md:grid-cols-4">
-                        <StatusCard count={invites.length} label="Invited" />
-                        <StatusCard count={unconfirmed.length} label="Unconfirmed" />
-                        <StatusCard count={attending.length} label="Attending" />
-                        <StatusCard count={declined.length} label="Declined" />
+                        <StatusCard count={data()!.length} label="Invited" />
+                        <StatusCard count={getUnconfirmed().length} label="Unconfirmed" />
+                        <StatusCard count={getAttending().length} label="Attending" />
+                        <StatusCard count={getDeclined().length} label="Declined" />
                     </div>
                 </Section.Container>
             </Section>
             <Section class="my-6 md:my-8">
                 <Section.Container>
-                    <div class="pb-[16px] mb-[16px]">
-                        <h2 class="font-bold md:text-2xl">Unconfirmed</h2>
-                        <For each={unconfirmed}>
-                            {(invite) => (
-                                <InviteCard {...invite} />
-                            )}
-                        </For>
-                    </div>
-                    <div class="pb-[16px] mb-[16px]">
-                        <div>
-                            <h2 class="font-bold md:text-2xl">Attending</h2>
+                    <Show when={data()!.length === 0}>
+                        <div class="mt-[64px]">
+                            <h2 class="text-center font-bold md:text-2xl">You haven't invited anyone yet, why not do so now</h2>
+                            <div class="text-center mt-[24px]">
+                                <SubmitButton text="Add an invite" class="text-[14px]" onClick={() => setShowInviteModal(true)} />
+                            </div>
                         </div>
-                        <For each={attending}>
-                            {(invite) => (
-                                <InviteCard {...invite} />
-                            )}
-                        </For>
-                    </div>
-                    <div class="pb-[16px] mb-[16px]">
-                        <h2 class="font-bold md:text-2xl">Declined</h2>
-                        <For each={declined}>
-                            {(invite) => (
-                                <InviteCard {...invite} />
-                            )}
-                        </For>
-                    </div>
+                    </Show>
+                    <Show when={getUnconfirmed().length > 0}>
+                        <div class="pb-[16px] mb-[16px]">
+                            <h2 class="font-bold md:text-2xl">Unconfirmed</h2>
+                            <For each={getUnconfirmed()}>
+                                {(invite) => (
+                                    <UserCard {...invite} />
+                                )}
+                            </For>
+                        </div>
+                    </Show>
+                    <Show when={getAttending().length > 0}>
+                        <div class="pb-[16px] mb-[16px]">
+                            <div>
+                                <h2 class="font-bold md:text-2xl">Attending</h2>
+                            </div>
+                            <For each={getAttending()}>
+                                {(invite) => (
+                                    <UserCard {...invite} />
+                                )}
+                            </For>
+                        </div>
+                    </Show>
+                    <Show when={getDeclined().length > 0}>
+                        <div class="pb-[16px] mb-[16px]">
+                            <h2 class="font-bold md:text-2xl">Declined</h2>
+                            <For each={getDeclined()}>
+                                {(invite) => (
+                                    <UserCard {...invite} />
+                                )}
+                            </For>
+                        </div>
+                    </Show>
                 </Section.Container>
             </Section>
             <InviteModal isOpen={showInviteModal()} closeModal={() => setShowInviteModal(false)} />

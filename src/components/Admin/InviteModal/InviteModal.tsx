@@ -16,6 +16,8 @@ import SubmitButton from '@components/SubmitButton';
 import { createSignal, For, JSXElement, Show } from 'solid-js';
 import GenericField from '@components/GenericField';
 import cx from 'classnames';
+import { refetchRouteData } from 'solid-start';
+import {ErrorCodes} from '@utils/error-codes';
 
 interface InviteModalProps {
     isOpen: boolean;
@@ -34,7 +36,7 @@ const InvitePersonSchema = z.object({
 
 const InviteSchema = z.object({
     invitedTo: z.nativeEnum(InvitedTo),
-    people: z.array(InvitePersonSchema)
+    users: z.array(InvitePersonSchema)
 });
 
 type InvitePersonType = z.infer<typeof InvitePersonSchema>;
@@ -43,7 +45,7 @@ type InviteFormType = z.infer<typeof InviteSchema>;
 const PersonCard = (props: {
     isEditingPerson: boolean;
     isEditingMe: boolean,
-    person: InvitePersonType | undefined;
+    user: InvitePersonType | undefined;
     onSave: () => void;
     onEdit: () => void;
     onRemove: () => void;
@@ -56,9 +58,9 @@ const PersonCard = (props: {
             {props.children}
             <SubmitButton text="Save" class="mt-[16px] w-full" onClick={props.onSave} />
         </div>
-        <Show when={props.person && !props.isEditingMe}>
+        <Show when={props.user && !props.isEditingMe}>
             <div class="flex justify-between">
-                <p><strong>{props.person!.firstName} {props.person!.lastName}</strong></p>
+                <p><strong>{props.user!.firstName} {props.user!.lastName}</strong></p>
                 <Show when={!props.isEditingPerson}>
                     <div class="flex gap-2">
                         <button type="button" onClick={props.onEdit}>Edit</button>
@@ -73,15 +75,34 @@ const PersonCard = (props: {
 const InviteModal = (props: InviteModalProps) => {
     const [ editPerson, setEditPerson ] = createSignal<number | null>(0);
     const [ savedPeople, setSavedPeople ] = createSignal<Array<InvitePersonType>>([]);
+    const [ errorMessage, setErrorMessage ] = createSignal<string | null>(null);
     const [ inviteForm, { Form, Field, FieldArray }] = createForm<InviteFormType>({
         initialValues: {
-            people: [{
+            invitedTo: undefined,
+            users: [{
                 firstName: '',
                 lastName: '',
             }]
         },
         validate: zodForm(InviteSchema)
     });
+
+    const resetForm = () => {
+        reset(inviteForm, {
+            initialValues: {
+                invitedTo: undefined,
+                users: [{
+                    firstName: '',
+                    lastName: '',
+                }]
+            }
+        });
+    }
+
+    const onCloseModal = () => {
+        resetForm();
+        props.closeModal();
+    }
 
     const handleInviteSubmit: SubmitHandler<InviteFormType> = async (formValues) => {
         const response = await fetch(new URL('/api/invites', getHost()).toString(), {
@@ -93,35 +114,37 @@ const InviteModal = (props: InviteModalProps) => {
         });
 
         if (!response.ok) {
+            const { error } = await response.json();
+            switch (error.code) {
+                case ErrorCodes.INVITE_USER_EXISTS:
+                    setErrorMessage("Unable to add already existing person");
+                    break;
+                default:
+                    setErrorMessage('Something went wrong, please try again.');
+                    break;
+            }
             return;
         }
 
         setEditPerson(0);
         setSavedPeople([]);
-        reset(inviteForm, {
-            initialValues: {
-                people: [{
-                    firstName: '',
-                    lastName: '',
-                }]
-            }
-        });
-        props.closeModal();
+        await refetchRouteData(['invites']);
+        onCloseModal();
     }
 
     const handleSavePerson = async (index: number) => {
         // @ts-ignore
-        const people: Array<InvitePersonType> = getValues(inviteForm, {
+        const users: Array<InvitePersonType> = getValues(inviteForm, {
             shouldActive: false,
-        }).people;
+        }).users;
 
-        const isValid = await validate(inviteForm, 'people')
-        const person = people.at(index);
+        const isValid = await validate(inviteForm, 'users')
+        const user = users.at(index);
 
-        if (person && isValid) {
+        if (user && isValid) {
             setSavedPeople(previousValue => {
                 const newValue = previousValue.slice();
-                newValue.splice(index, 1, person);
+                newValue.splice(index, 1, user);
 
                 return newValue;
             });
@@ -132,7 +155,7 @@ const InviteModal = (props: InviteModalProps) => {
 
     const handleEditPerson = async (index: number) => {
         if (editPerson() !== null) {
-            const isValid = await validate(inviteForm, 'people');
+            const isValid = await validate(inviteForm, 'users');
 
             if (!isValid) {
                 return;
@@ -156,12 +179,12 @@ const InviteModal = (props: InviteModalProps) => {
             return newValue;
         });
 
-        remove(inviteForm, 'people', {
+        remove(inviteForm, 'users', {
             at: index
         });
 
         if (shouldSetDefault) {
-            insert(inviteForm, 'people', {
+            insert(inviteForm, 'users', {
                 value: {
                     firstName: '',
                     lastName: ''
@@ -175,7 +198,7 @@ const InviteModal = (props: InviteModalProps) => {
     const handleAddPerson = async () => {
         const index = savedPeople().length;
 
-        insert(inviteForm, 'people', {
+        insert(inviteForm, 'users', {
             value: {
                 firstName: '',
                 lastName: ''
@@ -186,11 +209,16 @@ const InviteModal = (props: InviteModalProps) => {
     }
 
     return (
-        <Modal isOpen={props.isOpen} closeModal={props.closeModal}>
+        <Modal isOpen={props.isOpen} closeModal={onCloseModal}>
             <>
-                <Modal.Header title="Add an invite" closeModal={props.closeModal} />
+                <Modal.Header title="Add an invite" closeModal={onCloseModal} />
                 <Modal.Body>
                     <Form onSubmit={handleInviteSubmit}>
+                        <Show when={errorMessage() !== null}>
+                            <div class="px-[16px] py-[12px] mb-[16px] bg-red-200">
+                                {errorMessage()}
+                            </div>
+                        </Show>
                         <Field name="invitedTo">
                             {(field, props) => (
                                 <SelectField
@@ -206,20 +234,20 @@ const InviteModal = (props: InviteModalProps) => {
                                 />
                             )}
                         </Field>
-                        <FieldArray name="people">
+                        <FieldArray name="users">
                             {(fieldArray) => (
                                 <>
                                     <For each={fieldArray.items}>
                                         {(_, index) => (
                                             <PersonCard
                                                 isEditingPerson={Boolean(editPerson())}
-                                                person={savedPeople().at(index())}
+                                                user={savedPeople().at(index())}
                                                 isEditingMe={editPerson() === index()}
                                                 onSave={() => handleSavePerson(index())}
                                                 onEdit={() => handleEditPerson(index())}
                                                 onRemove={() => handleRemovePerson(index())}>
                                                 <div class="flex gap-4">
-                                                    <Field name={`people.${index()}.firstName`}>
+                                                    <Field name={`users.${index()}.firstName`}>
                                                         {(field, props) => (
                                                             <GenericField
                                                                 {...props}
@@ -232,7 +260,7 @@ const InviteModal = (props: InviteModalProps) => {
                                                             />
                                                         )}
                                                     </Field>
-                                                    <Field name={`people.${index()}.lastName`}>
+                                                    <Field name={`users.${index()}.lastName`}>
                                                         {(field, props) => (
                                                             <GenericField
                                                                 {...props}

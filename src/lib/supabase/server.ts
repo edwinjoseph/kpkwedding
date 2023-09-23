@@ -15,8 +15,6 @@ const initialiseSBServer = (req: Request) => {
         auth: {
             flowType: 'pkce',
             storageKey: AUTH_TOKEN_COOKIE_NAME,
-            autoRefreshToken: false,
-            persistSession: false,
         }
     });
 }

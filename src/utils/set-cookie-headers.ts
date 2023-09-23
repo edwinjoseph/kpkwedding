@@ -14,7 +14,7 @@ const setCookieHeaders = (session: Session | null, expired = false): [string, st
     }
 
     const currentDate = new Date();
-    const expiryMilliseconds = !expired ? session!.expires_in * 60 : -1000;
+    const expiryMilliseconds = !expired ? session!.expires_in * 1000 : -1000;
     const cookieValue = !expired ? JSON.stringify(session) : '';
     const cookieExpiry = addMillisecondsToDate(currentDate, expiryMilliseconds).toUTCString();
     const authTokenCookie = `${AUTH_TOKEN_COOKIE_NAME}=${cookieValue}; Expires=${cookieExpiry}; Path=/; SameSite=Lax;`;

@@ -29,7 +29,7 @@ const handleProtectedPaths: Middleware = ({ forward }) => async (event) => {
     const isLoginRoute = url.pathname === '/login';
     const isAdminRoute = url.pathname.startsWith('/admin');
 
-    if ((!isLoginRoute && !isAdminRoute) || getHost() === 'http://localhost:3000/') {
+    if ((!isLoginRoute && !isAdminRoute)) {
         return forward(event);
     }
 
@@ -37,7 +37,7 @@ const handleProtectedPaths: Middleware = ({ forward }) => async (event) => {
     const isAuthenticated = Boolean(data.session?.access_token);
     const isAdmin = data.session?.user?.app_metadata?.userrole === 'webadmin';
 
-    if (!isAuthenticated && !isLoginRoute) {
+    if (!isAuthenticated && !isLoginRoute && getHost() !== 'http://localhost:3000/') {
         return redirect('/login');
     }
 

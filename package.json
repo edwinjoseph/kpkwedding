@@ -10,6 +10,7 @@
   "type": "module",
   "license": "MIT",
   "devDependencies": {
+    "@types/lodash": "^4.14.198",
     "@types/node": "^20.6.0",
     "autoprefixer": "^10.4.15",
     "postcss": "^8.4.28",
@@ -28,6 +29,7 @@
     "@supabase/ssr": "^0.0.1",
     "@supabase/supabase-js": "^2.33.1",
     "classnames": "^2.3.2",
+    "lodash": "^4.17.21",
     "solid-collapse": "^1.1.0",
     "solid-js": "^1.7.11",
     "solid-markdown": "^1.2.2",

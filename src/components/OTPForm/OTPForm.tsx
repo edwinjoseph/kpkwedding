@@ -57,7 +57,6 @@ const OTPForm = ({ email, onSubmit, onGlobalError }: OTPFormProps) => {
                 return;
             }
             if (index !== 0) {
-                console.log(index - 1);
                 setCode(oldCode => {
                     const newCode = oldCode.slice()
                     newCode.splice(index - 1, 1, null)
