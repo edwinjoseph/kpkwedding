@@ -13,6 +13,7 @@ export async function POST({ request }: APIEvent) {
     });
 
     if (error) {
+        console.error(error);
         return respondWithAPIError(ErrorCodes.AUTH_UNABLE_TO_LOGIN);
     }
 

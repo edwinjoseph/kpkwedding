@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import {JSX, splitProps} from 'solid-js';
+import { JSX, splitProps } from 'solid-js';
 
 interface GenericInputProps {
     name: string;
@@ -18,6 +18,8 @@ interface GenericInputProps {
     pattern?: string;
     max?: number | string;
     autocomplete?: string;
+    placeholder?: string;
+    required?: boolean;
 }
 
 const GenericInput = (props: GenericInputProps) => {

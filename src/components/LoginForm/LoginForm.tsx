@@ -1,5 +1,5 @@
-import {createEffect, Setter} from 'solid-js';
-import {createForm, zodForm, SubmitHandler, getValue} from '@modular-forms/solid';
+import { createEffect } from 'solid-js';
+import { createForm, zodForm, SubmitHandler, getValue } from '@modular-forms/solid';
 import { z } from 'zod';
 import GenericField from '@components/GenericField';
 import SubmitButton from '@components/SubmitButton';
@@ -12,23 +12,23 @@ type LoginFormType = z.infer<typeof LoginSchema>;
 
 export interface LoginFormProps {
     onSubmit: SubmitHandler<LoginFormType>;
-    onGlobalError: Setter<{ text: Array<string> } | null>
+    setFormError?: (value: { code?: string; text?: Array<string> } | null) => void
 }
 
-const LoginForm = ({ onSubmit, onGlobalError }: LoginFormProps) => {
-    const [loginForm, { Form, Field }] = createForm<LoginFormType>({
+const LoginForm = (props: LoginFormProps) => {
+    const [ loginForm, { Form, Field } ] = createForm<LoginFormType>({
         validateOn: 'blur',
         validate: zodForm(LoginSchema)
     });
 
     createEffect(() => {
         if (getValue(loginForm, 'email', { shouldActive: false })) {
-            onGlobalError(null);
+            props.setFormError?.(null);
         }
     });
 
     return (
-        <Form onSubmit={onSubmit}>
+        <Form onSubmit={props.onSubmit} data-form-type="login">
             <Field name="email">
                 {(field, props) => (
                     <GenericField

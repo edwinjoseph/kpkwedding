@@ -1,6 +1,6 @@
-import { splitProps, Component, JSX } from 'solid-js';
-import cx from 'classnames';
+import { splitProps, Component, JSX, Show } from 'solid-js';
 import GenericInput from '@components/GenericInput';
+import LabelError from '@components/LabelError';
 
 type GenericFieldProps = {
     name: string;
@@ -14,23 +14,26 @@ type GenericFieldProps = {
     onInput: JSX.EventHandler<HTMLInputElement, InputEvent>;
     onChange: JSX.EventHandler<HTMLInputElement, Event>;
     onBlur: JSX.EventHandler<HTMLInputElement, FocusEvent>;
+    class?: string;
 };
 
 const GenericField: Component<GenericFieldProps> = (props) => {
     const [, inputProps ] = splitProps(props, ['label', 'error']);
 
     return (
-        <div>
-            {props.label && (
+        <div class={props.class}>
+            <Show when={props.label}>
                 <label for={props.name} class="inline-block font-semibold mb-[16px] md:text-[18px]">
                     {props.label}
                 </label>
-            )}
+            </Show>
             <GenericInput
                 {...inputProps}
                 hasError={!!props.error}
             />
-            {props.error && <div id={`${props.name}-error`} class="text-[#F11A41] font-medium mt-1">{props.error}</div>}
+            <Show when={props.error}>
+                <LabelError name={props.name} text={props.error} />
+            </Show>
         </div>
     );
 }

@@ -1,14 +1,14 @@
-import { onMount, For, createSignal, Setter, JSX } from 'solid-js';
+import { onMount, For, createSignal, JSX } from 'solid-js';
 import GenericInput from '@components/GenericInput';
 import SubmitButton from '@components/SubmitButton';
 
 export interface OTPFormProps {
     email: string;
     onSubmit: (values: { email: string; code: string; }, event: SubmitEvent) => void;
-    onGlobalError: Setter<{ text: Array<string> } | null>
+    setFormError?: (value: { code?: string; text?: Array<string> } | null) => void
 }
 
-const OTPForm = ({ email, onSubmit, onGlobalError }: OTPFormProps) => {
+const OTPForm = ({ email, onSubmit, setFormError }: OTPFormProps) => {
     const [ code, setCode ] = createSignal<Array<string | null>>([...new Array(6)].map(() => null));
     const fields: Array<HTMLInputElement> = [];
 
@@ -89,14 +89,14 @@ const OTPForm = ({ email, onSubmit, onGlobalError }: OTPFormProps) => {
                 return;
             }
 
-            onGlobalError(null);
+            setFormError?.(null);
 
             const code = ((event as ClipboardEvent).clipboardData)
                 ?.getData("text")
                 ?.replaceAll('\n', '').split('') || [];
 
             if (code.length !== 6) {
-                onGlobalError({
+                setFormError?.({
                     text: [`The code "${code.join('')}" doesn't look correct, please double check what you copied`],
                 });
                 return;
@@ -114,7 +114,7 @@ const OTPForm = ({ email, onSubmit, onGlobalError }: OTPFormProps) => {
     }
 
     return (
-        <form onsubmit={handleSubmit}>
+        <form onsubmit={handleSubmit} data-form-type="otp">
             <p class="mb-4">A one time code has been sent to <strong>"{email}"</strong></p>
 
             <div class="grid grid-cols-6 gap-1 md:gap-2">

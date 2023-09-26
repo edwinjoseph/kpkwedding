@@ -1,4 +1,4 @@
-import { SupabaseClient } from '@supabase/supabase-js';
+import { PostgrestSingleResponse, SupabaseClient } from '@supabase/supabase-js';
 import camelCase from 'lodash/camelCase';
 import deepMapKeys from '@utils/deep-map-keys';
 import { Database } from '@lib/supabase/database.types';
@@ -56,8 +56,9 @@ export interface ClientInvite {
 }
 
 export interface GetInvite {
-    firstName: string;
-    lastName: string;
+    firstName?: string | null;
+    lastName?: string | null;
+    userId?: string | null;
 }
 
 const convertToClientInvite = (invite: ReturnDBInvite): ClientInvite => {
@@ -95,6 +96,7 @@ export const create = async (supabase: SupabaseClient<Database>, values: ClientI
         .single();
 
     if (invite.error) {
+        console.error(invite.error);
         throw new APIError(invite.error.message, ErrorCodes.UNKNOWN);
     }
 
@@ -115,6 +117,7 @@ export const create = async (supabase: SupabaseClient<Database>, values: ClientI
             .delete()
             .eq('id', inviteID);
 
+        console.error(users.error);
         throw new APIError(users.error.message, ErrorCodes.UNKNOWN);
     }
 
@@ -149,6 +152,7 @@ export const getInvites = async (supabase: SupabaseClient<Database>): Promise<Ar
         .returns<Array<ReturnDBInvite>>();
 
     if (invites.error) {
+        console.error(invites.error);
         throw new APIError(invites.error.message, ErrorCodes.UNKNOWN);
     }
 
@@ -156,15 +160,32 @@ export const getInvites = async (supabase: SupabaseClient<Database>): Promise<Ar
 }
 
 export const getInvite = async (supabase: SupabaseClient<Database>, values: GetInvite): Promise<ClientInvite> => {
-    const user = await supabase.schema('rsvp')
-        .from('users')
-        .select('*')
-        .eq('first_name', values.firstName)
-        .eq('last_name', values.lastName)
-        .limit(1)
-        .single();
+    let user: PostgrestSingleResponse<Database['rsvp']['Tables']['users']['Row']> | undefined;
 
-    if (user.error) {
+    if (values.firstName && values.lastName) {
+        user = await supabase.schema('rsvp')
+            .from('users')
+            .select('*')
+            .eq('first_name', values.firstName)
+            .eq('last_name', values.lastName)
+            .limit(1)
+            .single();
+    }
+
+    if (values.userId) {
+        user = await supabase.schema('rsvp')
+            .from('users')
+            .select('*')
+            .eq('user_id', values.userId)
+            .limit(1)
+            .single();
+    }
+
+    if (!user) {
+        throw new APIError('Unable to find user with invite', ErrorCodes.INVITE_USER_NOT_FOUND);
+    }
+
+    if (user.error && user.error?.code !== 'PGRST116') {
         throw new APIError(user.error.message, ErrorCodes.UNKNOWN);
     }
 
@@ -173,7 +194,7 @@ export const getInvite = async (supabase: SupabaseClient<Database>, values: GetI
     }
 
     if (user.data.is_coming) {
-        await isAuthenticated(supabase);
+        await isAuthenticated(supabase, user.data.user_id!);
     }
 
     const inviteID = user.data.invite_id;
@@ -202,5 +223,20 @@ export const getInvite = async (supabase: SupabaseClient<Database>, values: GetI
         throw new APIError(invite.error.message, ErrorCodes.UNKNOWN);
     }
 
-    return convertToClientInvite(invite.data);
+    const users = invite.data.users.sort((a, b) => {
+        if (a.first_name === values.firstName && a.last_name === values.lastName) {
+            return -1;
+        }
+
+        if (b.first_name === values.firstName && b.last_name === values.firstName) {
+            return 1;
+        }
+
+        return 0;
+    })
+
+    return convertToClientInvite({
+        ...invite.data,
+        users
+    });
 }

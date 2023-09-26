@@ -37,7 +37,7 @@ const handleProtectedPaths: Middleware = ({ forward }) => async (event) => {
     const isAuthenticated = Boolean(data.session?.access_token);
     const isAdmin = data.session?.user?.app_metadata?.userrole === 'webadmin';
 
-    if (!isAuthenticated && !isLoginRoute && getHost() !== 'http://localhost:3000/') {
+    if (!isAuthenticated && !isLoginRoute) {
         return redirect('/login');
     }
 

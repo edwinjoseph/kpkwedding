@@ -1,4 +1,4 @@
-import {APIEvent, json} from 'solid-start';
+import { APIEvent, json } from 'solid-start';
 import supabase from '@lib/supabase/server';
 import { create, getInvite, getInvites } from '@lib/supabase/invites';
 import { ErrorCodes, respondWithAPIError } from '@utils/error-codes';
@@ -15,6 +15,7 @@ export const POST = async ({ request }: APIEvent) => {
             return respondWithAPIError(err.code);
         }
 
+        console.error(err);
         return respondWithAPIError(ErrorCodes.UNKNOWN);
     }
 }
@@ -23,12 +24,14 @@ export const GET = async ({ request }: APIEvent) => {
     const { searchParams } = new URL(request.url)
     const firstName = searchParams.get('firstName');
     const lastName = searchParams.get('lastName');
+    const userId = searchParams.get('userId');
 
     try {
-        if (firstName && lastName) {
+        if (firstName && lastName || userId) {
             const invite = await getInvite(supabase(request), {
                 firstName,
                 lastName,
+                userId,
             });
 
             return json(invite)
@@ -42,6 +45,7 @@ export const GET = async ({ request }: APIEvent) => {
             return respondWithAPIError(err.code);
         }
 
+        console.error(err);
         return respondWithAPIError(ErrorCodes.UNKNOWN);
     }
 }
