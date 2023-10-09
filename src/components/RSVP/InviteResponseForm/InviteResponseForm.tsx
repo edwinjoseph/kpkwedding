@@ -119,7 +119,7 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
 
     return (
         <Form onSubmit={handleRSVPSubmit}>
-            <div class="mb-[24px]">
+            <div class="mb-10">
                 <FieldArray name="users">
                     {(fieldArray) => (
                         <div class="grid gap-[24px]">

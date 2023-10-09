@@ -12,7 +12,7 @@ const RSVPForm = (props: { isAuthenticated: boolean, invite: ClientInvite | null
     const [ findInviteData, setFindInviteData ] = createSignal<FindInviteFormType | null>(null)
     const [ invite, setInvite ] = createSignal<ClientInvite | null>(props.invite || null);
     const [ shouldLogin, setShouldLogin ] = createSignal(props.isAuthenticated || false);
-    const [ showSubmission, setShowSubmission ] = createSignal(false);
+    const [ showSubmission, setShowSubmission ] = createSignal(props.invite && props.isAuthenticated);
 
     const handleFindInvite: FindInviteFormProps['onSubmit'] = (values) => {
         setFindInviteData(values);
@@ -102,7 +102,7 @@ const RSVPForm = (props: { isAuthenticated: boolean, invite: ClientInvite | null
                 <InviteResponseForm invite={invite()!} isAuthenticated={props.isAuthenticated} onSubmit={handleOnSubmission} />
             </Show>
             <Show when={invite() !== null && showSubmission()}>
-                <RSVPSubmitted invite={invite()} onChangeResponse={() => setShowSubmission(false)}  />
+                <RSVPSubmitted invite={invite()!} onChangeResponse={() => setShowSubmission(false)}  />
             </Show>
         </div>
     );

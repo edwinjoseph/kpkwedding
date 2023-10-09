@@ -2,7 +2,8 @@ import { defineConfig } from 'vite';
 import solid from 'solid-start/vite';
 import vercel from "solid-start-vercel";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
-import tsconfigPaths from 'vite-tsconfig-paths'
+import tsconfigPaths from 'vite-tsconfig-paths';
+import solidSvg from 'vite-plugin-solid-svg';
 
 export default defineConfig({
   plugins: [
@@ -17,6 +18,7 @@ export default defineConfig({
       project: "kpkwedding",
       authToken: process.env.SENTRY_AUTH_TOKEN,
     }),
+    solidSvg(),
     solid({ adapter: vercel() }),
   ],
   server: {
