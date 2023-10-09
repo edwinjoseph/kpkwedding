@@ -10,6 +10,7 @@
   "type": "module",
   "license": "MIT",
   "devDependencies": {
+    "@sentry/vite-plugin": "^2.8.0",
     "@types/jsonwebtoken": "^9.0.3",
     "@types/lodash": "^4.14.199",
     "@types/node": "^20.7.0",

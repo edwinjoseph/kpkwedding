@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import solid from 'solid-start/vite';
 import vercel from "solid-start-vercel";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
@@ -11,6 +12,11 @@ export default defineConfig({
     */
     // devtools(),
     tsconfigPaths(),
+    sentryVitePlugin({
+      org: "edwin-joseph",
+      project: "kpkwedding",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    }),
     solid({ adapter: vercel() }),
   ],
   server: {
@@ -18,5 +24,6 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
+    sourcemap: true
   },
 });
