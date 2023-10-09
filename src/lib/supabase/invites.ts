@@ -254,11 +254,11 @@ export const getInvite = async (supabase: SupabaseClient<Database>, values: GetI
     }
 
     const users = invite.data.users.sort((a, b) => {
-        if (a.first_name === values.firstName && a.last_name === values.lastName) {
+        if (a.first_name === user?.data!.first_name && a.last_name === user?.data!.last_name) {
             return -1;
         }
 
-        if (b.first_name === values.firstName && b.last_name === values.firstName) {
+        if (b.first_name === user?.data!.first_name && b.last_name === user?.data!.last_name) {
             return 1;
         }
 
