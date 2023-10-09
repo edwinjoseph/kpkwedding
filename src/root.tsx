@@ -26,6 +26,7 @@ export default function Root() {
           <Link rel="preconnect" href="https://fonts.googleapis.com" />
           <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
           <Link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@900&display=swap" rel="stylesheet" />
+          <script src="https://js.sentry-cdn.com/d03f2ab62d9dd1c88df40ac6a16c5260.min.js" crossorigin="anonymous" />
         </Head>
         <Body>
           <Suspense>

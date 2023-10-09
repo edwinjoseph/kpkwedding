@@ -9,7 +9,7 @@ export interface OTPFormProps {
 }
 
 const OTPForm = ({ email, onSubmit, setFormError }: OTPFormProps) => {
-    const [ code, setCode ] = createSignal<Array<string | null>>([...new Array(6)].map(() => null));
+    const [ code, setCode ] = createSignal<Array<string | null>>([null, null, null, null, null, null]);
     const fields: Array<HTMLInputElement> = [];
 
     const focus = (index: number) => {
