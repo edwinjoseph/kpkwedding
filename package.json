@@ -10,6 +10,7 @@
   "type": "module",
   "license": "MIT",
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.3",
     "@types/lodash": "^4.14.199",
     "@types/node": "^20.7.0",
     "autoprefixer": "^10.4.16",
@@ -29,6 +30,7 @@
     "@supabase/ssr": "^0.0.2",
     "@supabase/supabase-js": "^2.36.0",
     "classnames": "^2.3.2",
+    "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "solid-collapse": "^1.1.0",
     "solid-js": "^1.7.12",

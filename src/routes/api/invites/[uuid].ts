@@ -1,20 +1,24 @@
 import { APIEvent, json } from 'solid-start';
 import supabase from '@lib/supabase/server';
-import { isAuthenticated } from '@lib/supabase/users';
+import { updateInvite } from '@lib/supabase/invites';
 import APIError from '@errors/APIError';
 import { ErrorCodes, respondWithAPIError } from '@utils/error-codes';
 
-export async function GET({ request }: APIEvent) {
+export const PATCH = async ({ request, params }: APIEvent) => {
+    const uuid = params.uuid;
+    const body = await new Response(request.body).json();
+
     try {
-        const session = await isAuthenticated(supabase(request));
+        await updateInvite(supabase(request), { id: uuid, users: body.users });
         return json({
-            data: session,
+            data: { ok: true }
         });
-    } catch (err) {
+    } catch (err: any) {
         if (err instanceof APIError) {
             return respondWithAPIError(err.code);
         }
 
+        console.error(err);
         return respondWithAPIError(ErrorCodes.UNKNOWN);
     }
 }

@@ -1,7 +1,7 @@
 import { createServerData$ } from 'solid-start/server';
 import { useRouteData } from '@solidjs/router';
-import { getSession } from '../handlers/auth';
-import { getInvite } from '../handlers/invites';
+import { getSession } from '@handlers/auth';
+import { getInvite } from '@handlers/invites';
 import Hero from '@components/Hero';
 import Agenda from '@components/Agenda';
 import Locations from '@components/Locations';
@@ -13,18 +13,18 @@ import RSVP from '@components/RSVP';
 export function routeData() {
     return createServerData$(async (_, event) => {
         const cookies = event.request.headers.get('cookie');
-        const data = await getSession(cookies || '');
+        const sessionRes = await getSession(cookies || '');
 
-        if ('error' in data) {
+        if (sessionRes.error) {
             return {
                 isAuthenticated: false,
                 invite: null,
             };
         }
 
-        const invite = await getInvite({ userId: data.user.id }, cookies || '');
+        const inviteRes = await getInvite({ userId: sessionRes.data.user.id }, cookies || '');
 
-        if ('error' in invite) {
+        if (inviteRes.error) {
             return {
                 isAuthenticated: true,
                 invite: null,
@@ -33,7 +33,7 @@ export function routeData() {
 
         return {
             isAuthenticated: true,
-            invite,
+            invite: inviteRes.data,
         }
 
     }, {
@@ -47,7 +47,7 @@ export function routeData() {
 
 const App = () => {
     const data = useRouteData<typeof routeData>();
-    console.log(data());
+
     return (
         <>
             <header class="bg-white fixed w-full z-10 top-0">
@@ -60,7 +60,7 @@ const App = () => {
                 <Hero />
                 <Agenda />
                 <Locations />
-                <RSVP isAuthenticated={data()?.isAuthenticated! || false} />
+                <RSVP isAuthenticated={data()?.isAuthenticated! || false} invite={data()?.invite || null} />
                 <Gallery />
                 <FAQs />
                 <Final />

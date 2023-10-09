@@ -2,7 +2,7 @@ import getHost from '@utils/get-host';
 import { Session } from '@supabase/supabase-js';
 import { ErrorResponse } from './types';
 
-export const getSession = async (cookies?: string): Promise<Session | ErrorResponse> => {
+export const getSession = async (cookies?: string): Promise<ErrorResponse<Session>> => {
     const headers: HeadersInit = [
         ['Content-type', 'application/json'],
     ]

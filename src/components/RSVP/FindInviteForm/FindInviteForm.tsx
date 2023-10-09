@@ -1,4 +1,4 @@
-import { createSignal, Show } from 'solid-js';
+import { createSignal, Show} from 'solid-js';
 import { createForm, getErrors, SubmitHandler, validate, zodForm } from '@modular-forms/solid';
 import { z } from 'zod';
 import GenericInput from '@components/GenericInput';
@@ -6,18 +6,19 @@ import LabelError from '@components/LabelError';
 import SubmitButton from '@components/SubmitButton';
 import { ClientInvite } from '@lib/supabase/invites';
 import { ErrorCodes } from '@utils/error-codes';
-import { getInvite } from '../../../handlers/invites';
+import { getInvite } from '@handlers/invites';
 
 const FindInviteFormSchema = z.object({
     firstName: z.string().min(2, 'Your first name must have at least 2 characters'),
     lastName: z.string().min(2, 'Your last name must have at least 2 characters'),
 })
 
-type FindInviteFormType = z.infer<typeof FindInviteFormSchema>;
+export type FindInviteFormType = z.infer<typeof FindInviteFormSchema>;
 
-interface FindInviteFormProps {
-    onRequiresAuth: (values: FindInviteFormType) => void;
-    onFound: (invite: ClientInvite) => void;
+export interface FindInviteFormProps {
+    onSubmit?: (values: FindInviteFormType) => void;
+    onRequiresAuth: () => void;
+    onFound: (invite: ClientInvite | null) => void;
 }
 
 const FindInviteForm = (props: FindInviteFormProps) => {
@@ -49,18 +50,20 @@ const FindInviteForm = (props: FindInviteFormProps) => {
             return;
         }
 
-        const data = await getInvite({
+        props.onSubmit?.(values);
+
+        const inviteRes = await getInvite({
             firstName: values.firstName,
             lastName: values.lastName
         });
 
-        if ('error' in data && data.error) {
-            switch (data.error.code) {
+        if (inviteRes.error) {
+            switch (inviteRes.error.code) {
                 case ErrorCodes.INVITE_USER_NOT_FOUND:
                     setFullNameError('Invitation not found');
                     break;
                 case ErrorCodes.AUTH_NOT_AUTHORISED:
-                    props.onRequiresAuth(values);
+                    props.onRequiresAuth();
                     break;
                 default:
                     setFullNameError('Something went wrong, please try again');
@@ -69,7 +72,7 @@ const FindInviteForm = (props: FindInviteFormProps) => {
             return;
         }
 
-        props.onFound(data as ClientInvite);
+        props.onFound(inviteRes.data);
     }
 
     return (

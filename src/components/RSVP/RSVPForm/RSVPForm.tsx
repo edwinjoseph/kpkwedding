@@ -1,48 +1,26 @@
-import { createSignal, For, Show } from 'solid-js';
-import { z } from 'zod';
-import { createForm, setValues, SubmitHandler, zodForm } from '@modular-forms/solid';
+import {createEffect, createSignal, Show} from 'solid-js';
+import { refetchRouteData } from 'solid-start';
 import { ClientInvite, InvitedTo } from '@lib/supabase/invites';
-import FindInviteForm from '@components/RSVP/FindInviteForm';
+import FindInviteForm, { FindInviteFormProps, FindInviteFormType } from '@components/RSVP/FindInviteForm';
 import LoginFlowForm from '@components/LoginFlowForm';
+import InviteResponseForm from '@components/RSVP/InviteResponseForm';
+import RSVPSubmitted from '@components/RSVP/RSVPSubmitted';
+import {verifyInvite} from '@handlers/invites';
+import APIError from '@errors/APIError';
 
-const RSVPSchema = z.object({
-    users: z.array(
-        z.object({
-            firstName: z.string(),
-            lastName: z.string(),
-            email: z.string().email(),
-            isComing: z.boolean(),
-            isVegan: z.boolean().optional(),
-            isVegetarian: z.boolean().optional(),
-            noGluten: z.boolean().optional(),
-            noNuts: z.boolean().optional(),
-            noDairy: z.boolean().optional(),
-            other: z.string().optional()
-        })
-    ).optional()
-})
+const RSVPForm = (props: { isAuthenticated: boolean, invite: ClientInvite | null }) => {
+    const [ findInviteData, setFindInviteData ] = createSignal<FindInviteFormType | null>(null)
+    const [ invite, setInvite ] = createSignal<ClientInvite | null>(props.invite || null);
+    const [ shouldLogin, setShouldLogin ] = createSignal(props.isAuthenticated || false);
+    const [ showSubmission, setShowSubmission ] = createSignal(false);
 
-type RSVPFormType = z.infer<typeof RSVPSchema>;
+    const handleFindInvite: FindInviteFormProps['onSubmit'] = (values) => {
+        setFindInviteData(values);
+    }
 
-const RSVPForm = (props: { isAuthenticated: boolean }) => {
-    const [ invite, setInvite ] = createSignal<ClientInvite | null>(null);
-    const [ shouldLogin, setShouldLogin ] = createSignal(false);
-    const [ rsvpForm, { Form, Field }] = createForm<RSVPFormType>({
-        validateOn: 'blur',
-        validate: zodForm(RSVPSchema)
-    });
-
-    const handleFoundInvite = (invite: ClientInvite) => {
-        setInvite(invite);
-        const users = invite.users.map(user => ({ firstName: user.firstName, lastName: user.lastName, email: user.email })) as RSVPFormType['users'];
-
-        if (users) {
-            setValues(rsvpForm, 'users', users, {
-                shouldFocus: false,
-                shouldTouched: true,
-                shouldDirty: true,
-                shouldValidate: false
-            });
+    const handleFoundInvite: FindInviteFormProps['onFound'] = (invite) => {
+        if (invite) {
+            setInvite(invite);
         }
     }
 
@@ -53,8 +31,31 @@ const RSVPForm = (props: { isAuthenticated: boolean }) => {
         }
     }
 
-    const handleAuthorised = () => {
+    const handleEmailSubmitted = async (email: string) => {
+        const data = findInviteData();
 
+        if (!data) {
+            return;
+        }
+
+        const res = await verifyInvite({
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: email
+        });
+
+        if (res.error) {
+            throw new APIError('Email address provided does not match with email address linked', res.error.code);
+        }
+    }
+
+    const handleAuthorised = async () => {
+        await refetchRouteData(['invite']);
+    }
+
+    const handleOnSubmission = (invite: ClientInvite) => {
+        setInvite(invite);
+        setShowSubmission(true);
     }
 
     const renderInviteDescription = () => {
@@ -78,34 +79,30 @@ const RSVPForm = (props: { isAuthenticated: boolean }) => {
         return `Hi ${data.users[0].firstName}, ${personInvited} are invited to our ${invitedTo}.`
     }
 
-    const handleRSVPSubmit: SubmitHandler<RSVPFormType> = (values) => {
-
-    }
+    createEffect(() => {
+        setInvite(props.invite);
+        setShouldLogin(props.isAuthenticated);
+    })
 
     return (
         <div class="max-w-[600px] mx-auto text-center">
-            <Show when={invite() === null && shouldLogin() === false}>
-                <FindInviteForm onFound={handleFoundInvite} onRequiresAuth={handleRequiresAuth} />
+            <Show when={invite() === null && !shouldLogin() && !showSubmission()}>
+                <FindInviteForm onSubmit={handleFindInvite} onFound={handleFoundInvite} onRequiresAuth={handleRequiresAuth} />
             </Show>
-            <Show when={invite() === null && shouldLogin() === true}>
+            <Show when={invite() === null && shouldLogin() && !showSubmission()}>
                 <h3 class="text-[18px] md:text-[24px] font-bold mb-[24px]">Your invitation</h3>
                 <p class="md:text-[18px] mb-[24px]">Welcome back! To edit your RSVP you will need to sign in.</p>
                 <div class="max-w-[400px] mx-auto">
-                    <LoginFlowForm onAuthorised={handleAuthorised} />
+                    <LoginFlowForm onEmailSubmit={handleEmailSubmitted} onAuthorised={handleAuthorised} />
                 </div>
             </Show>
-            <Show when={invite() !== null}>
+            <Show when={invite() !== null && !showSubmission()}>
                 <h3 class="text-[18px] md:text-[24px] font-bold mb-[24px]">Your invitation</h3>
                 <p class="md:text-[18px]">{renderInviteDescription()}</p>
-                <For each={invite()?.users}>
-                    {(user) => (
-                        <>
-                            <hr class="my-[40px] border-t border-[#CBCBCB]" />
-                            <h4 class="text-[18px] md:text-[24px] font-bold mb-[24px]">{user.firstName} {user.lastName}</h4>
-                            <h5 class="md:text-[18px] font-semibold mb-[24px]">Can you make it?</h5>
-                        </>
-                    )}
-                </For>
+                <InviteResponseForm invite={invite()!} isAuthenticated={props.isAuthenticated} onSubmit={handleOnSubmission} />
+            </Show>
+            <Show when={invite() !== null && showSubmission()}>
+                <RSVPSubmitted invite={invite()} onChangeResponse={() => setShowSubmission(false)}  />
             </Show>
         </div>
     );

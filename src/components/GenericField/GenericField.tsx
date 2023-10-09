@@ -32,7 +32,9 @@ const GenericField: Component<GenericFieldProps> = (props) => {
                 hasError={!!props.error}
             />
             <Show when={props.error}>
-                <LabelError name={props.name} text={props.error} />
+                <div class="text-left">
+                    <LabelError name={props.name} text={props.error} />
+                </div>
             </Show>
         </div>
     );

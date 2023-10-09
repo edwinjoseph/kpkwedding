@@ -16,6 +16,7 @@ const enableCors: Middleware = ({ forward }) => async (event) => {
         if (allowedHosts.includes(url.origin) || allowedHosts.includes(url.host)) {
             response.headers.append('Access-Control-Allow-Origin', getHost());
         }
+
         response.headers.append('Access-Control-Allow-Credentials', 'true');
         response.headers.append('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
         response.headers.append('Cache-Control', 'no-store, max-age=0');

@@ -1,21 +1,62 @@
-import { createSignal, Show } from 'solid-js';
+import {createSignal, onMount, Show} from 'solid-js';
+import { useSearchParams } from 'solid-start';
 import OTPForm from '@components/OTPForm';
 import LoginForm from '@components/LoginForm';
 import getHost from '@utils/get-host';
 import { LoginFormProps } from '@components/LoginForm/LoginForm';
 import { ErrorCodes } from '@utils/error-codes';
+import ErrorMessage from '@components/ErrorMessage';
+import APIError from '@errors/APIError';
 
 interface LoginFlowFormProps {
-    setFormError?: (value: { code?: string; text?: Array<string> } | null) => void,
-    onAuthorised?: (redirectUrl: string) => void;
+    onEmailSubmit?: (email: string) => Promise<void> | void;
+    onAuthorised?: (redirectUrl: string) => Promise<void> | void;
 }
 
 const LoginFlowForm = (props: LoginFlowFormProps) => {
+    const [ searchParams ] = useSearchParams();
+    const [ globalError, setGlobalError ] = createSignal<{ text: Array<string> } | null>(null);
     const [ email, setEmail ] = createSignal<string | null>(null);
     const [ showOPTForm, setShowOPTForm ] = createSignal<boolean>(false);
 
+    const handleErrorCode = (errorCode: string) => {
+        switch (errorCode) {
+            case '0001':
+            case '0002':
+            case '0003':
+            case '0004':
+                setGlobalError({
+                    text: ["Unable to authenticate session, please try logging in again."]
+                });
+                break;
+            case '0011':
+                setGlobalError({
+                    text: ["The email address provided is not linked to the invite found, please try again."]
+                });
+                break;
+            default:
+                setGlobalError({
+                    text: ['Something went wrong, please try again.']
+                });
+        }
+    }
+
+    const setFormError = (value: { code?: string; text?: Array<string> } | null): void => {
+        if (value === null || value.text !== undefined) {
+            setGlobalError(value as { text: Array<string> });
+            return;
+        }
+
+        if (value.code) {
+            handleErrorCode(value.code);
+            return;
+        }
+    }
+
     async function loginOTP(email: string) {
         try {
+            await props.onEmailSubmit?.(email);
+
             const response = await fetch(new URL('/api/auth/login', getHost()).toString(), {
                 method: 'POST',
                 headers: {
@@ -28,7 +69,7 @@ const LoginFlowForm = (props: LoginFlowFormProps) => {
 
             if (!response.ok) {
                 if (data?.error?.code) {
-                    props.setFormError?.({ code: data.error.code });
+                    setFormError?.({ code: data.error.code });
                     return;
                 }
 
@@ -38,7 +79,12 @@ const LoginFlowForm = (props: LoginFlowFormProps) => {
             setEmail(email);
             setShowOPTForm(true);
         } catch (err: unknown) {
-            props.setFormError?.({ code: ErrorCodes.UNKNOWN});
+            if (err instanceof APIError) {
+                setFormError?.({ code: err.code });
+                return;
+            }
+
+            setFormError?.({ code: ErrorCodes.UNKNOWN});
         }
     }
 
@@ -55,11 +101,10 @@ const LoginFlowForm = (props: LoginFlowFormProps) => {
 
         if (!response.ok) {
             if (data?.error?.code) {
-                props.setFormError?.({ code: data.error.code });
+                setFormError?.({ code: data.error.code });
                 return;
             }
         }
-
 
         const redirectTo = response.headers.get('Location');
 
@@ -83,17 +128,27 @@ const LoginFlowForm = (props: LoginFlowFormProps) => {
         void verifyOTP(formValues.email, formValues.code);
     }
 
+    onMount(() => {
+        if (searchParams.error) {
+            handleErrorCode(searchParams.error);
+        }
+    })
+
     return (
         <>
+            <Show when={globalError() !== null}>
+                <ErrorMessage text={globalError()!.text} />
+            </Show>
+
             <Show when={showOPTForm()}>
-                <OTPForm email={email()!} onSubmit={handleOTPSubmit} setFormError={props.setFormError} />
+                <OTPForm email={email()!} onSubmit={handleOTPSubmit} setFormError={setFormError} />
                 <div class="text-center">
                     <a onClick={() => setShowOPTForm(false)} class="inline-block text-gray-600 mt-2 underline cursor-pointer">Use a different email address</a>
                 </div>
             </Show>
 
             <Show when={!showOPTForm()}>
-                <LoginForm onSubmit={handleLoginSubmit} setFormError={props.setFormError} />
+                <LoginForm onSubmit={handleLoginSubmit} setFormError={setFormError} />
             </Show>
         </>
     )

@@ -8,7 +8,7 @@ interface UserListItem extends ClientUser {
     invitedTo: InvitedTo;
 }
 
-export const getInvites = async (cookies: string): Promise<Array<ClientInvite> | ErrorResponse> => {
+export const getInvites = async (cookies: string): Promise<ErrorResponse<Array<ClientInvite>>> => {
     const response = await fetch(new URL('/api/invites', getHost()).toString(), {
         headers: [
             ['Content-type', 'application/json'],
@@ -19,14 +19,14 @@ export const getInvites = async (cookies: string): Promise<Array<ClientInvite> |
     return response.json();
 };
 
-export const getAllInvitees = async (cookies: string): Promise<Array<UserListItem> | ErrorResponse> => {
+export const getAllInvitees = async (cookies: string): Promise<ErrorResponse<Array<UserListItem>>> => {
     const invites = await getInvites(cookies);
 
-    if (!Array.isArray(invites)) {
+    if (invites.error) {
         return invites;
     }
 
-    return invites.reduce<Array<UserListItem>>((acc, invite) => {
+    const userList = invites.data.reduce<Array<UserListItem>>((acc, invite) => {
         invite.users.forEach(user => {
             acc.push({
                 ...user,
@@ -37,9 +37,13 @@ export const getAllInvitees = async (cookies: string): Promise<Array<UserListIte
 
         return acc;
     }, []);
+
+    return {
+        data: userList
+    }
 };
 
-export const getInvite = async (options: { firstName?: string; lastName?: string; userId?: string; }, cookies?: string): Promise<ClientInvite | ErrorResponse> => {
+export const getInvite = async (options: { firstName?: string; lastName?: string; userId?: string; }, cookies?: string): Promise<ErrorResponse<ClientInvite>> => {
     const url = new URL('/api/invites', getHost());
 
     if (options.firstName && options.lastName) {
@@ -66,5 +70,50 @@ export const getInvite = async (options: { firstName?: string; lastName?: string
     const response = await fetch(url.toString(), {
         headers,
     });
+
+    return response.json();
+}
+
+export const updateInvite = async (options: { id: string, users: Array<ClientUser> }, cookies?: string): Promise<ErrorResponse<{ ok: true }>> => {
+    const url = new URL(`/api/invites/${options.id}`, getHost());
+
+    let headers: HeadersInit = [
+        ['Content-type', 'application/json']
+    ];
+
+    if (cookies) {
+        headers.push(['Cookie', cookies]);
+    }
+
+    const response = await fetch(url.toString(), {
+        headers,
+        method: 'PATCH',
+        body: JSON.stringify({
+            users: options.users
+        })
+    });
+
+    return response.json();
+}
+
+export const verifyInvite = async (options: { firstName: string, lastName: string; email: string }, cookies?: string): Promise<ErrorResponse<{ ok: true }>> => {
+    const url = new URL(`/api/invites/verify`, getHost());
+
+    url.searchParams.append('firstName', options.firstName);
+    url.searchParams.append('lastName', options.lastName);
+    url.searchParams.append('email', options.email);
+
+    let headers: HeadersInit = [
+        ['Content-type', 'application/json']
+    ];
+
+    if (cookies) {
+        headers.push(['Cookie', cookies]);
+    }
+
+    const response = await fetch(url.toString(), {
+        headers,
+    });
+
     return response.json();
 }

@@ -1,16 +1,22 @@
 import { createSignal, For, Show} from 'solid-js';
 import { useRouteData } from '@solidjs/router';
 import { createServerData$ } from 'solid-start/server';
+import { getAllInvitees } from '@handlers/invites';
 import Section from '@components/Section';
 import SubmitButton from '@components/SubmitButton';
 import InviteModal from '@components/Admin/InviteModal';
 import StatusCard from '@components/Admin/StatusCard';
 import UserCard from '@components/Admin/UserCard/UserCard';
-import { getAllInvitees } from '../../handlers/invites';
 
 export function routeData() {
     return createServerData$(async (_, event) => {
-        return getAllInvitees(event.request.headers.get('cookie') || '');
+        const invitesRes = await getAllInvitees(event.request.headers.get('cookie') || '');
+
+        if (invitesRes.error) {
+            return [];
+        }
+
+        return invitesRes.data;
     }, { key: ['invites'], initialValue: [], ssrLoadFrom: 'server' })
 }
 
@@ -34,7 +40,7 @@ const Admin = () => {
             return [];
         }
 
-        return res.filter(invite => invite.response === null)
+        return res.filter(invite => invite.isComing === null)
     };
 
     const getAttending = () => {
@@ -44,7 +50,7 @@ const Admin = () => {
             return [];
         }
 
-        return res.filter(invite => invite.response && invite.isComing)
+        return res.filter(invite => invite.isComing === true)
     };
 
     const getDeclined = () => {
@@ -54,7 +60,7 @@ const Admin = () => {
             return [];
         }
 
-        return res.filter(invite => invite.response && !invite.isComing);
+        return res.filter(invite => invite.isComing === false);
     };
 
     const [ showInviteModal, setShowInviteModal ] = createSignal<boolean>(false);

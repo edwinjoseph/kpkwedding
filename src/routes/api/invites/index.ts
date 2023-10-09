@@ -9,7 +9,9 @@ export const POST = async ({ request }: APIEvent) => {
 
     try {
         const inviteId = await create(supabase(request), body);
-        return json({ inviteId: inviteId });
+        return json({
+            data: { inviteId: inviteId }
+        });
     } catch (err: any) {
         if (err instanceof APIError) {
             return respondWithAPIError(err.code);
@@ -21,7 +23,7 @@ export const POST = async ({ request }: APIEvent) => {
 }
 
 export const GET = async ({ request }: APIEvent) => {
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(request.url);
     const firstName = searchParams.get('firstName');
     const lastName = searchParams.get('lastName');
     const userId = searchParams.get('userId');
@@ -34,12 +36,14 @@ export const GET = async ({ request }: APIEvent) => {
                 userId,
             });
 
-            return json(invite)
+            return json({ data: invite })
         }
 
         const invites = await getInvites(supabase(request));
 
-        return json(invites)
+        return json({
+            data: invites,
+        })
     } catch (err: any) {
         if (err instanceof APIError) {
             return respondWithAPIError(err.code);
