@@ -139,7 +139,7 @@ const InviteModal = (props: InviteModalProps) => {
         }).users;
 
         const isValid = await validate(inviteForm, 'users')
-        const user = users.at(index);
+        const user = users[index];
 
         if (user && isValid) {
             setSavedPeople(previousValue => {
@@ -241,7 +241,7 @@ const InviteModal = (props: InviteModalProps) => {
                                         {(_, index) => (
                                             <PersonCard
                                                 isEditingPerson={Boolean(editPerson())}
-                                                user={savedPeople().at(index())}
+                                                user={savedPeople()[index()]}
                                                 isEditingMe={editPerson() === index()}
                                                 onSave={() => handleSavePerson(index())}
                                                 onEdit={() => handleEditPerson(index())}

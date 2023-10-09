@@ -1,7 +1,6 @@
 import { onMount, For, createSignal, JSX } from 'solid-js';
 import GenericInput from '@components/GenericInput';
 import SubmitButton from '@components/SubmitButton';
-import * as Sentry from '@sentry/browser';
 
 export interface OTPFormProps {
     email: string;
@@ -14,23 +13,13 @@ const OTPForm = ({ email, onSubmit, setFormError }: OTPFormProps) => {
     const fields: Array<HTMLInputElement> = [];
 
     const focus = (index: number) => {
-        const el = fields.at(index);
+        const el = fields[index];
 
         el!.focus()
     }
 
     const getValue = (index: number): string | null => {
-        if (!('at' in code())) {
-            Sentry.captureMessage('failed to create code array', {
-                level: 'warning',
-                extra: {
-                    codeType: typeof code(),
-                    codeValue: code(),
-                }
-            });
-        }
-
-        const value = code().at(index);
+        const value = code()[index];
 
         return value || null;
     }
@@ -38,7 +27,7 @@ const OTPForm = ({ email, onSubmit, setFormError }: OTPFormProps) => {
     const focusOnLastEnabledField = () => {
         let index = code().length - 1;
 
-        while (index !== 0 && code().at(index) === null) {
+        while (index !== 0 && code()[index] === null) {
             index = index - 1;
         }
 
@@ -57,8 +46,8 @@ const OTPForm = ({ email, onSubmit, setFormError }: OTPFormProps) => {
         event.preventDefault();
 
         if (event.key === 'Backspace') {
-            if (fields.at(index)!.value) {
-                fields.at(index)!.value = '';
+            if (fields[index]!.value) {
+                fields[index]!.value = '';
                 setCode(oldCode => {
                     const newCode = oldCode.slice()
                     newCode.splice(index, 1, null)
