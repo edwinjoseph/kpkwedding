@@ -1,6 +1,7 @@
 import { onMount, For, createSignal, JSX } from 'solid-js';
 import GenericInput from '@components/GenericInput';
 import SubmitButton from '@components/SubmitButton';
+import * as Sentry from '@sentry/browser';
 
 export interface OTPFormProps {
     email: string;
@@ -19,6 +20,16 @@ const OTPForm = ({ email, onSubmit, setFormError }: OTPFormProps) => {
     }
 
     const getValue = (index: number): string | null => {
+        if (!('at' in code())) {
+            Sentry.captureMessage('failed to create code array', {
+                level: 'warning',
+                extra: {
+                    codeType: typeof code(),
+                    codeValue: code(),
+                }
+            });
+        }
+
         const value = code().at(index);
 
         return value || null;
