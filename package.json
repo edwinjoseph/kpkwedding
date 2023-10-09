@@ -26,6 +26,7 @@
     "@auth/supabase-adapter": "^0.1.2",
     "@faker-js/faker": "^8.1.0",
     "@modular-forms/solid": "^0.19.2",
+    "@sentry/browser": "^7.73.0",
     "@solidjs/meta": "^0.28.6",
     "@solidjs/router": "^0.8.3",
     "@supabase/ssr": "^0.0.2",

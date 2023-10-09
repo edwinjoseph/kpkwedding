@@ -14,6 +14,9 @@ dependencies:
   '@modular-forms/solid':
     specifier: ^0.19.2
     version: 0.19.2(solid-js@1.7.12)
+  '@sentry/browser':
+    specifier: ^7.73.0
+    version: 7.73.0
   '@solidjs/meta':
     specifier: ^0.28.6
     version: 0.28.6(solid-js@1.7.12)
@@ -1764,7 +1767,18 @@ packages:
       '@sentry/types': 7.73.0
       '@sentry/utils': 7.73.0
       tslib: 2.6.2
-    dev: true
+
+  /@sentry/browser@7.73.0:
+    resolution: {integrity: sha512-e301hUixcJ5+HNKCJwajFF5smF4opXEFSclyWsJuFNufv5J/1C1SDhbwG2JjBt5zzdSoKWJKT1ewR6vpICyoDw==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry-internal/tracing': 7.73.0
+      '@sentry/core': 7.73.0
+      '@sentry/replay': 7.73.0
+      '@sentry/types': 7.73.0
+      '@sentry/utils': 7.73.0
+      tslib: 2.6.2
+    dev: false
 
   /@sentry/bundler-plugin-core@2.8.0:
     resolution: {integrity: sha512-DsTUgeKPqck3DkGzKjRduhPpEn0pez+/THF3gpwQBEfbPnKGr0EYugDvfungZwBFenckIvQBDTOZw0STvbgChA==}
@@ -1806,7 +1820,6 @@ packages:
       '@sentry/types': 7.73.0
       '@sentry/utils': 7.73.0
       tslib: 2.6.2
-    dev: true
 
   /@sentry/node@7.73.0:
     resolution: {integrity: sha512-i50bRfmgkRRx0XXUbg9jGD/RuznDJxJXc4rBILhoJuhl+BjRIaoXA3ayplfJn8JLZxsNh75uJaCq4IUK70SORw==}
@@ -1824,10 +1837,18 @@ packages:
       - supports-color
     dev: true
 
+  /@sentry/replay@7.73.0:
+    resolution: {integrity: sha512-a8IC9SowBisLYD2IdLkXzx7gN4iVwHDJhQvLp2B8ARs1PyPjJ7gCxSMHeGrYp94V0gOXtorNYkrxvuX8ayPROA==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@sentry/core': 7.73.0
+      '@sentry/types': 7.73.0
+      '@sentry/utils': 7.73.0
+    dev: false
+
   /@sentry/types@7.73.0:
     resolution: {integrity: sha512-/v8++bly8jW7r4cP2wswYiiVpn7eLLcqwnfPUMeCQze4zj3F3nTRIKc9BGHzU0V+fhHa3RwRC2ksqTGq1oJMDg==}
     engines: {node: '>=8'}
-    dev: true
 
   /@sentry/utils@7.73.0:
     resolution: {integrity: sha512-h3ZK/qpf4k76FhJV9uiSbvMz3V/0Ovy94C+5/9UgPMVCJXFmVsdw8n/dwANJ7LupVPfYP23xFGgebDMFlK1/2w==}
@@ -1835,7 +1856,6 @@ packages:
     dependencies:
       '@sentry/types': 7.73.0
       tslib: 2.6.2
-    dev: true
 
   /@sentry/vite-plugin@2.8.0:
     resolution: {integrity: sha512-17++vXjfn0xEfE7W4FWdwoXdNNqGjXnuTvIgSLlhJvDCTcqWONDpA/TGXGLjbhQEmQ58wL4wQqmlyxoqMPlokQ==}
