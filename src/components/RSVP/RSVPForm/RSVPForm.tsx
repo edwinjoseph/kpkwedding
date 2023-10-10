@@ -80,8 +80,11 @@ const RSVPForm = (props: { isAuthenticated: boolean, invite: ClientInvite | null
     }
 
     createEffect(() => {
-        setInvite(props.invite);
-        setShouldLogin(props.isAuthenticated);
+        if (props.isAuthenticated !== shouldLogin()) {
+            setInvite(props.invite);
+            setShouldLogin(props.isAuthenticated);
+            setShowSubmission(props.invite && props.isAuthenticated)
+        }
     })
 
     return (

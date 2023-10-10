@@ -69,12 +69,12 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
             users: props.invite.users.map((user) => ({
                 firstName: user.firstName,
                 lastName: user.lastName,
-                email: user.email,
+                email: user.email ?? undefined,
                 userId: user.id,
                 isComing: user.isComing?.toString(),
                 isVegan: Boolean(user?.isVegan),
                 isVegetarian: Boolean(user?.isVegetarian),
-                noGluten: Boolean(user?.noGlutan),
+                noGluten: Boolean(user?.noGluten),
                 noNuts: Boolean(user?.noNuts),
                 noDairy: Boolean(user?.noDairy),
                 addOther: Boolean(user?.other),
@@ -92,7 +92,7 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
             isComing: user.isComing === 'true',
             isVegan: user.isVegan,
             isVegetarian: user.isVegetarian,
-            noGlutan: user.noGluten,
+            noGluten: user.noGluten,
             noNuts: user.noNuts,
             noDairy: user.noDairy,
             other: user.other,
@@ -187,34 +187,34 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                                         <div class="flex flex-col gap-[24px]">
                                                             <Field type="boolean" name={`users.${index()}.isVegan`}>
                                                                 {(field, props) => (
-                                                                    <CheckboxInput {...props} label="Vegan" />
+                                                                    <CheckboxInput {...props} label="Vegan" name={field.name} checked={field.value} />
                                                                 )}
                                                             </Field>
                                                             <Field type="boolean" name={`users.${index()}.isVegetarian`}>
                                                                 {(field, props) => (
-                                                                    <CheckboxInput {...props} label="Vegetarian" />
+                                                                    <CheckboxInput {...props} label="Vegetarian" name={field.name} checked={field.value}  />
                                                                 )}
                                                             </Field>
                                                             <Field type="boolean" name={`users.${index()}.noGluten`}>
                                                                 {(field, props) => (
-                                                                    <CheckboxInput {...props} label="No gluten" />
+                                                                    <CheckboxInput {...props} label="No gluten" name={field.name} checked={field.value}  />
                                                                 )}
                                                             </Field>
                                                         </div>
                                                         <div class="flex flex-col gap-[24px]">
                                                             <Field type="boolean" name={`users.${index()}.noNuts`}>
                                                                 {(field, props) => (
-                                                                    <CheckboxInput {...props} label="No nuts" />
+                                                                    <CheckboxInput {...props} label="No nuts" name={field.name} checked={field.value}  />
                                                                 )}
                                                             </Field>
                                                             <Field type="boolean" name={`users.${index()}.noDairy`}>
                                                                 {(field, props) => (
-                                                                    <CheckboxInput {...props} label="No dairy" />
+                                                                    <CheckboxInput {...props} label="No dairy" name={field.name} checked={field.value}  />
                                                                 )}
                                                             </Field>
                                                             <Field type="boolean" name={`users.${index()}.addOther`}>
                                                                 {(field, props) => (
-                                                                    <CheckboxInput {...props} label="Other" />
+                                                                    <CheckboxInput {...props} label="Other" name={field.name} checked={field.value}  />
                                                                 )}
                                                             </Field>
                                                         </div>

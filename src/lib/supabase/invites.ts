@@ -1,11 +1,12 @@
-import {PostgrestSingleResponse, SupabaseClient} from '@supabase/supabase-js';
+import { PostgrestSingleResponse, SupabaseClient } from '@supabase/supabase-js';
 import camelCase from 'lodash/camelCase';
 import deepMapKeys from '@utils/deep-map-keys';
-import {Database} from '@lib/supabase/database.types';
+import { Database } from '@lib/supabase/database.types';
 import {getOrCreateUser, isAuthenticated} from '@lib/supabase/users';
 import APIError from '@errors/APIError';
-import {ErrorCodes} from '@utils/error-codes';
-import {findByClientUserName} from '@lib/supabase/utils/findByClientUser';
+import { ErrorCodes } from '@utils/error-codes';
+import { findByClientUserName } from '@lib/supabase/utils/findByClientUser';
+import buildInvite from '@lib/supabase/utils/buildInvite';
 
 export enum InvitedTo {
     CEREMONY = 'CEREMONY',
@@ -16,9 +17,9 @@ export type TableResponse = Database['rsvp']['Tables']['responses']['Row'];
 export type TableUser = Database['rsvp']['Tables']['users']['Row'];
 export type TableInvite = Database['rsvp']['Tables']['invites']['Row'];
 
-export type SelectInvite = Pick<TableInvite, 'id' | 'invited_to'> & {
-    users: Array<Omit<TableUser, 'created_at'> & {
-        responses: [Omit<TableResponse, 'created_at' | 'id'>]
+export type SelectInvite = Pick<TableInvite, 'id' | 'invited_to' | 'updated_at'> & {
+    users: Array<Omit<TableUser, 'created_at' | 'invite_id'> & Omit<TableResponse, 'created_at' | 'id' | 'rsvp_user_id'> & {
+        email?: string | null;
     }>
 }
 
@@ -39,18 +40,18 @@ export interface ReturnDBUser {
 interface ReturnDBInvite {
     id: string,
     invited_to: string;
-    users: Array<ReturnDBUser & { email?: string }>
+    users: Array<ReturnDBUser & { email?: string | null }>
 }
 
 export interface ClientUser {
     firstName: string;
     lastName: string;
     id?: string;
-    email?: string;
+    email?: string | null;
     isComing?: boolean;
     isVegan?: boolean;
     isVegetarian?: boolean;
-    noGlutan?: boolean;
+    noGluten?: boolean;
     noNuts?: boolean;
     noDairy?: boolean;
     other?: string;
@@ -84,15 +85,7 @@ export interface UpdateTable<Row = Record<string, any>> {
 }
 
 const convertToClientInvite = (invite: SelectInvite): ClientInvite => {
-    const clonedInvite: ReturnDBInvite = {
-        ...invite,
-        users: invite.users.map(({ responses, ...user }) => ({
-            ...user,
-            ...responses[0]
-        }))
-    }
-
-    return deepMapKeys(clonedInvite, camelCase);
+    return deepMapKeys(invite, camelCase);
 }
 
 export const create = async (supabase: SupabaseClient<Database>, values: ClientInvite): Promise<string> => {
@@ -149,36 +142,63 @@ export const create = async (supabase: SupabaseClient<Database>, values: ClientI
 export const getInvites = async (supabase: SupabaseClient<Database>): Promise<Array<ClientInvite>> => {
     await isAuthenticated(supabase);
 
-    const invites = await supabase.schema('rsvp')
+    const invitesRes = await supabase.schema('rsvp')
         .from('invites')
         .select(`
             id,
             invited_to,
-            users (
-                id,
-                first_name,
-                last_name,
-                is_coming,
-                responses (
-                    is_vegan,
-                    is_vegetarian,
-                    no_dairy,
-                    no_gluten,
-                    no_nuts,
-                    other
-                )
-            )
-        `)
-        .order('created_at', { foreignTable: 'users.responses', ascending: false })
-        .limit(1, { foreignTable: 'users.responses' })
-        .returns<Array<SelectInvite>>()
+            updated_at
+        `);
 
-    if (invites.error) {
-        console.error(invites.error);
-        throw new APIError(invites.error.message, ErrorCodes.UNKNOWN);
+    if (invitesRes.error) {
+        console.error(invitesRes.error);
+        throw new APIError('Failed to get invites', ErrorCodes.UNKNOWN)
     }
 
-    return invites.data.map(convertToClientInvite);
+    const usersRes = await supabase.schema('rsvp')
+        .from('users')
+        .select(`
+            id, 
+            first_name,
+            last_name,
+            is_coming,
+            user_id,
+            invite_id
+        `);
+
+    if (usersRes.error) {
+        console.error(usersRes.error);
+        throw new APIError('Failed to get users', ErrorCodes.UNKNOWN)
+    }
+
+    const responsesRes = await supabase.schema('rsvp')
+        .from('responses')
+        .select(`
+            is_vegan,
+            is_vegetarian,
+            no_dairy,
+            no_gluten,
+            no_nuts,
+            other,
+            rsvp_user_id
+        `)
+        .order('created_at', { ascending: false });
+
+    if (responsesRes.error) {
+        console.error(responsesRes.error);
+        throw new APIError('Failed to get responses', ErrorCodes.UNKNOWN)
+    }
+
+    const authUserRes = await supabase.auth.admin.listUsers();
+
+    if (authUserRes.error) {
+        console.error(authUserRes.error);
+        throw new APIError('Failed to get auth users', ErrorCodes.UNKNOWN)
+    }
+
+    const invites = invitesRes.data!.map(invite => buildInvite(invite, usersRes.data, responsesRes.data, authUserRes.data.users));
+
+    return invites.map(convertToClientInvite);
 }
 
 export const getInvite = async (supabase: SupabaseClient<Database>, values: GetInvite): Promise<ClientInvite> => {
@@ -221,39 +241,65 @@ export const getInvite = async (supabase: SupabaseClient<Database>, values: GetI
 
     const inviteID = user.data.invite_id;
 
-    const invite = await supabase.schema('rsvp')
+    const inviteRes = await supabase.schema('rsvp')
         .from('invites')
         .select(`
             id,
             invited_to,
-            users (
-                id,
-                first_name,
-                last_name,
-                is_coming,
-                user_id,
-                responses (
-                    is_vegan,
-                    is_vegetarian,
-                    no_dairy,
-                    no_gluten,
-                    no_nuts,
-                    other
-                )
-            )
+            updated_at
         `)
         .eq('id', inviteID)
-        .order('created_at', { foreignTable: 'users.responses', ascending: false })
-        .limit(1, { foreignTable: 'users.responses' })
-        .limit(1)
-        .returns<Array<SelectInvite>>()
         .single();
 
-    if (invite.error) {
-        throw new APIError(invite.error.message, ErrorCodes.UNKNOWN);
+    if (inviteRes.error) {
+        console.error(inviteRes.error);
+        throw new APIError('Failed to get invite', ErrorCodes.UNKNOWN)
     }
 
-    const users = invite.data.users.sort((a, b) => {
+    const usersRes = await supabase.schema('rsvp')
+        .from('users')
+        .select(`
+            id, 
+            first_name,
+            last_name,
+            is_coming,
+            user_id
+        `)
+        .eq('invite_id', inviteID);
+
+    if (usersRes.error) {
+        console.error(usersRes.error);
+        throw new APIError('Failed to get users', ErrorCodes.UNKNOWN)
+    }
+
+    const responsesRes = await supabase.schema('rsvp')
+        .from('responses')
+        .select(`
+            is_vegan,
+            is_vegetarian,
+            no_dairy,
+            no_gluten,
+            no_nuts,
+            other,
+            rsvp_user_id
+        `)
+        .order('created_at', { ascending: false });
+
+    if (responsesRes.error) {
+        console.error(responsesRes.error);
+        throw new APIError('Failed to get users', ErrorCodes.UNKNOWN)
+    }
+
+    const authUserRes = await supabase.auth.admin.listUsers();
+
+    if (authUserRes.error) {
+        console.error(authUserRes.error);
+        throw new APIError('Failed to get auth users', ErrorCodes.UNKNOWN)
+    }
+
+    const invite = buildInvite(inviteRes.data, usersRes.data, responsesRes.data, authUserRes.data.users)
+
+    const users = invite.users.sort((a, b) => {
         if (a.first_name === user?.data!.first_name && a.last_name === user?.data!.last_name) {
             return -1;
         }
@@ -266,7 +312,7 @@ export const getInvite = async (supabase: SupabaseClient<Database>, values: GetI
     })
 
     return convertToClientInvite({
-        ...invite.data,
+        ...invite,
         users
     });
 }
@@ -325,7 +371,7 @@ export const updateInvite = async (supabase: SupabaseClient<Database>, values: U
         let user_id = dbUser.user_id;
 
         if (!user_id) {
-            const userData = await getOrCreateUser(supabase, { email: user.email, firstName: dbUser.first_name, lastName: dbUser.last_name });
+            const userData = await getOrCreateUser(supabase, { email: user.email!, firstName: dbUser.first_name, lastName: dbUser.last_name });
             user_id = userData.id;
         } else {
             const session = await isAuthenticated(supabase);
@@ -333,15 +379,15 @@ export const updateInvite = async (supabase: SupabaseClient<Database>, values: U
         }
 
         users.push({
+            user_id,
             id: dbUser.id,
             first_name: dbUser.first_name,
             last_name: dbUser.first_name,
             email: user.email,
-            user_id,
             is_coming: user.isComing,
             is_vegan: user.isVegan,
             is_vegetarian: user.isVegetarian,
-            no_gluten: user.noGlutan,
+            no_gluten: user.noGluten,
             no_nuts: user.noNuts,
             no_dairy: user.noDairy,
             other: user.other || null

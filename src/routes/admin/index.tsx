@@ -83,7 +83,7 @@ const Admin = () => {
                     </div>
                 </Section.Container>
             </Section>
-            <Section class="my-6 md:my-8">
+            <Section class="mt-[56px] mb-6 md:mt-[56px] md:mb-6 ">
                 <Section.Container>
                     <Show when={getInvites().length === 0}>
                         <div class="mt-[64px]">
@@ -94,35 +94,41 @@ const Admin = () => {
                         </div>
                     </Show>
                     <Show when={getUnconfirmed().length > 0}>
-                        <div class="pb-[16px] mb-[16px]">
-                            <h2 class="font-bold md:text-2xl">Unconfirmed</h2>
-                            <For each={getUnconfirmed()}>
-                                {(invite) => (
-                                    <UserCard {...invite} />
-                                )}
-                            </For>
+                        <div class="mb-[56px]">
+                            <h2 class="font-bold md:text-2xl mb-6">Unconfirmed ({getUnconfirmed().length})</h2>
+                            <div class="flex flex-col gap-2">
+                                <For each={getUnconfirmed()}>
+                                    {(invite) => (
+                                        <UserCard {...invite} />
+                                    )}
+                                </For>
+                            </div>
                         </div>
                     </Show>
                     <Show when={getAttending().length > 0}>
-                        <div class="pb-[16px] mb-[16px]">
+                        <div class="mb-[56px]">
                             <div>
-                                <h2 class="font-bold md:text-2xl">Attending</h2>
+                                <h2 class="font-bold md:text-2xl mb-6">Attending ({getAttending().length})</h2>
                             </div>
-                            <For each={getAttending()}>
-                                {(invite) => (
-                                    <UserCard {...invite} />
-                                )}
-                            </For>
+                            <div class="flex flex-col gap-2">
+                                <For each={getAttending()}>
+                                    {(invite) => (
+                                        <UserCard {...invite} />
+                                    )}
+                                </For>
+                            </div>
                         </div>
                     </Show>
                     <Show when={getDeclined().length > 0}>
-                        <div class="pb-[16px] mb-[16px]">
-                            <h2 class="font-bold md:text-2xl">Declined</h2>
-                            <For each={getDeclined()}>
-                                {(invite) => (
-                                    <UserCard {...invite} />
-                                )}
-                            </For>
+                        <div class="mb-[56px]">
+                            <h2 class="font-bold md:text-2xl mb-6">Declined ({getDeclined().length})</h2>
+                            <div class="flex flex-col gap-2">
+                                <For each={getDeclined()}>
+                                    {(invite) => (
+                                        <UserCard {...invite} />
+                                    )}
+                                </For>
+                            </div>
                         </div>
                     </Show>
                 </Section.Container>

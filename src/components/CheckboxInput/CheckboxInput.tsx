@@ -6,6 +6,7 @@ interface CheckboxInputProps {
     label: string;
     class?: string;
     value?: string;
+    checked?: boolean;
     ref?: (element: HTMLInputElement) => void;
     onInput?: JSX.EventHandler<HTMLInputElement, InputEvent>;
     onKeyDown?: JSX.EventHandler<HTMLInputElement, KeyboardEvent>;
