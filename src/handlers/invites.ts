@@ -59,7 +59,7 @@ export const getInvite = async (options: { firstName?: string; lastName?: string
         return respondWithAPIError(ErrorCodes.INVITE_USER_NOT_FOUND).json();
     }
 
-    let headers: HeadersInit = [
+    const headers: HeadersInit = [
         ['Content-type', 'application/json']
     ];
 
@@ -77,7 +77,7 @@ export const getInvite = async (options: { firstName?: string; lastName?: string
 export const updateInvite = async (options: { id: string, users: Array<ClientUser> }, cookies?: string): Promise<ErrorResponse<{ ok: true }>> => {
     const url = new URL(`/api/invites/${options.id}`, getHost());
 
-    let headers: HeadersInit = [
+    const headers: HeadersInit = [
         ['Content-type', 'application/json']
     ];
 
@@ -103,7 +103,7 @@ export const verifyInvite = async (options: { firstName: string, lastName: strin
     url.searchParams.append('lastName', options.lastName);
     url.searchParams.append('email', options.email);
 
-    let headers: HeadersInit = [
+    const headers: HeadersInit = [
         ['Content-type', 'application/json']
     ];
 

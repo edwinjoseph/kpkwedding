@@ -20,6 +20,7 @@ const LearnMoreIcon = (props: LearnMoreIconProps) => {
                 <text>
                     <textPath
                         href="#circlePath"
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore
                         textLength={Math.floor(Math.PI * 90 - text.length)}
                         font-family="Montserrat"

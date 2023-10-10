@@ -133,13 +133,21 @@ const InviteModal = (props: InviteModalProps) => {
     }
 
     const handleSavePerson = async (index: number) => {
-        // @ts-ignore
-        const users: Array<InvitePersonType> = getValues(inviteForm, {
+        const isValid = await validate(inviteForm, 'users');
+
+        if (!isValid) {
+            return;
+        }
+
+        const users = getValues(inviteForm, {
             shouldActive: false,
         }).users;
 
-        const isValid = await validate(inviteForm, 'users')
-        const user = users[index];
+        if (!users) {
+            return;
+        }
+
+        const user = users[index] as InvitePersonType;
 
         if (user && isValid) {
             setSavedPeople(previousValue => {

@@ -16,33 +16,33 @@ export enum ErrorCodes {
     UNKNOWN = '9999',
 }
 
-enum HTTPErrorCode {
-    AUTH_MISSING_TOKEN_HASH = 400,
-    AUTH_MISSING_OTP_CREDENTIALS = 400,
-    AUTH_UNABLE_TO_AUTHORISE = 401,
-    AUTH_FAILED_TO_SET_HEADERS = 500,
-    AUTH_NOT_AUTHORISED = 401,
-    AUTH_UNABLE_TO_LOGIN = 500,
-    INVITE_USER_NOT_FOUND = 404,
-    INVITE_USER_EXISTS = 403,
-    INVITE_NOT_FOUND = 404,
-    INVITE_MISSING_DATA = 400,
-    INVITE_UNABLE_TO_VERIFY = 401,
-    UNKNOWN = 500,
-}
+const HTTPErrorCode = {
+    AUTH_MISSING_TOKEN_HASH: '400',
+    AUTH_MISSING_OTP_CREDENTIALS: '400',
+    AUTH_UNABLE_TO_AUTHORISE: '401',
+    AUTH_FAILED_TO_SET_HEADERS: '500',
+    AUTH_NOT_AUTHORISED: '401',
+    AUTH_UNABLE_TO_LOGIN: '500',
+    INVITE_USER_NOT_FOUND: '404',
+    INVITE_USER_EXISTS: '403',
+    INVITE_NOT_FOUND: '404',
+    INVITE_MISSING_DATA: '400',
+    INVITE_UNABLE_TO_VERIFY: '401',
+    UNKNOWN: '500',
+} as const
 
 const getKeyFromEnum = <T extends Record<string, string | number>>(value: string | number, enumerator: T) => {
     return Object.keys(enumerator).find((key) => enumerator[key] === value);
 }
 
-const getHTTPCodeFromErrorCode = (code: ErrorCodes): HTTPErrorCode => {
+const getHTTPCodeFromErrorCode = (code: ErrorCodes): number => {
     const key = getKeyFromEnum(code, ErrorCodes);
 
     if (!key) {
-        return 500;
+        return parseInt(HTTPErrorCode.UNKNOWN, 10);
     }
 
-    return HTTPErrorCode[key as keyof typeof HTTPErrorCode];
+    return parseInt(HTTPErrorCode[key as keyof typeof HTTPErrorCode], 10);
 }
 
 export const appendCodeToUrl = (path: string, code: ErrorCodes): string => {

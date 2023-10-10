@@ -1,7 +1,7 @@
 import {Component} from 'solid-js';
 import cx from 'classnames';
 
-const SubmitButton: Component<{ text: string, class?: string; alt?: boolean, small?: boolean, onClick?: () => any | Promise<any> }> = (props) => (
+const SubmitButton: Component<{ text: string, class?: string; alt?: boolean, small?: boolean, onClick?: () => void | Promise<void> }> = (props) => (
     <button
         type={props.onClick ? 'button' : 'submit'}
         class={cx('px-[24px] uppercase font-bold outline-none tracking-[3.2px]', {

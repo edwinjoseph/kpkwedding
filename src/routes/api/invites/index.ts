@@ -12,7 +12,7 @@ export const POST = async ({ request }: APIEvent) => {
         return json({
             data: { inviteId: inviteId }
         });
-    } catch (err: any) {
+    } catch (err: unknown) {
         if (err instanceof APIError) {
             return respondWithAPIError(err.code);
         }
@@ -44,7 +44,7 @@ export const GET = async ({ request }: APIEvent) => {
         return json({
             data: invites,
         })
-    } catch (err: any) {
+    } catch (err: unknown) {
         if (err instanceof APIError) {
             return respondWithAPIError(err.code);
         }

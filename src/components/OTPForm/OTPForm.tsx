@@ -80,12 +80,15 @@ const OTPForm = ({ email, onSubmit, setFormError }: OTPFormProps) => {
         focus(Math.min(index + 1, 5));
     }
 
+    const isHTMLInputElement = (el: unknown): el is HTMLInputElement => {
+        return el instanceof HTMLInputElement;
+    }
+
     onMount(() => {
         document.addEventListener("paste", (event) => {
             event.preventDefault();
 
-            // @ts-ignore
-            if (document.activeElement && !fields.includes(document.activeElement)) {
+            if (isHTMLInputElement(document.activeElement) && !fields.includes(document.activeElement)) {
                 return;
             }
 

@@ -106,7 +106,7 @@ const App = () => {
                 <Hero />
                 <Agenda />
                 <Locations />
-                <RSVP isAuthenticated={data()?.isAuthenticated! || false} invite={data()?.invite || null} />
+                <RSVP isAuthenticated={data()?.isAuthenticated || false} invite={data()?.invite || null} />
                 <Gallery />
                 <FAQs />
                 <Final />

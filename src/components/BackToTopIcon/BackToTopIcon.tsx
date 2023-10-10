@@ -20,6 +20,7 @@ const BackToTopIcon = (props: BackToTopIconProps) => {
                 {[...new Array(2)].map((_, index) => (
                     <textPath
                         href="#circlePath"
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore
                         textLength={Math.floor(Math.PI * 45 - text.length)}
                         startOffset={Math.floor(Math.PI * 45) * index}

@@ -37,12 +37,6 @@ export interface ReturnDBUser {
     other: string | null;
 }
 
-interface ReturnDBInvite {
-    id: string,
-    invited_to: string;
-    users: Array<ReturnDBUser & { email?: string | null }>
-}
-
 export interface ClientUser {
     firstName: string;
     lastName: string;
@@ -80,7 +74,7 @@ export interface UpdateInvite {
     users: Array<Required<ClientUser>>
 }
 
-export interface UpdateTable<Row = Record<string, any>> {
+export interface UpdateTable<Row = Record<string, unknown>> {
     rows: Array<Row>
 }
 
@@ -363,10 +357,10 @@ export const updateInvite = async (supabase: SupabaseClient<Database>, values: U
         throw new APIError('Unable to associate user to invite', ErrorCodes.INVITE_USER_NOT_FOUND);
     }
 
-    let users = [];
+    const users = [];
     let authFailed = false;
 
-    for (let dbUser of usersRes.data) {
+    for (const dbUser of usersRes.data) {
         const user = values.users.find(findByClientUserName(dbUser))!;
         let user_id = dbUser.user_id;
 
@@ -398,11 +392,11 @@ export const updateInvite = async (supabase: SupabaseClient<Database>, values: U
         throw new APIError('Not authorised to update this invite', ErrorCodes.AUTH_NOT_AUTHORISED);
     }
 
-    let responseIds = [];
-    let userIds = []
+    const responseIds = [];
+    const userIds = []
 
     try {
-        for (let user of users) {
+        for (const user of users) {
             const updateRespRes = await supabase.schema('rsvp')
                 .from('responses')
                 .insert({

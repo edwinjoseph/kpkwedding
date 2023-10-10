@@ -13,7 +13,7 @@ export const PATCH = async ({ request, params }: APIEvent) => {
         return json({
             data: { ok: true }
         });
-    } catch (err: any) {
+    } catch (err: unknown) {
         if (err instanceof APIError) {
             return respondWithAPIError(err.code);
         }

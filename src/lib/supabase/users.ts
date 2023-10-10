@@ -27,7 +27,7 @@ export const getOrCreateUser = async (supabase: SupabaseClient<Database>, values
         throw new APIError('Unable to find users', ErrorCodes.UNKNOWN);
     }
 
-    let user = usersRes.data.users.find(user => user.email === values.email);
+    const user = usersRes.data.users.find(user => user.email === values.email);
 
     if (user && user.user_metadata.first_name !== values.firstName && user.user_metadata.last_name !== values.lastName) {
         throw new APIError('User mismatch', ErrorCodes.AUTH_NOT_AUTHORISED);
