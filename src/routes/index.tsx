@@ -1,5 +1,8 @@
-import { createServerData$ } from 'solid-start/server';
+import {createEffect} from 'solid-js';
 import { useRouteData } from '@solidjs/router';
+import { createServerData$ } from 'solid-start/server';
+import * as Sentry from '@sentry/browser';
+import { ReportDialogOptions } from '@sentry/browser/types/helpers';
 import { getSession } from '@handlers/auth';
 import { getInvite } from '@handlers/invites';
 import Hero from '@components/Hero';
@@ -17,6 +20,7 @@ export function routeData() {
 
         if (sessionRes.error) {
             return {
+                session: null,
                 isAuthenticated: false,
                 invite: null,
             };
@@ -26,12 +30,14 @@ export function routeData() {
 
         if (inviteRes.error) {
             return {
+                session: sessionRes.data,
                 isAuthenticated: true,
                 invite: null,
             };
         }
 
         return {
+            session: sessionRes.data,
             isAuthenticated: true,
             invite: inviteRes.data,
         }
@@ -39,6 +45,7 @@ export function routeData() {
     }, {
         key: ['invite'],
         initialValue: {
+            session: null,
             isAuthenticated: false,
             invite: null,
         }
@@ -47,6 +54,44 @@ export function routeData() {
 
 const App = () => {
     const data = useRouteData<typeof routeData>();
+    let reportIssueButton: HTMLButtonElement | undefined;
+
+    const user = () => (!data() || !data()?.session) ? null : data()!.session!.user;
+
+    const handleReportIssue = () => {
+        const eventId = Sentry.captureMessage('User Feedback');
+        const options: ReportDialogOptions = {
+            eventId,
+            title: 'Encountered an issue?',
+            subtitle: 'Please use the form below to let us know.',
+            subtitle2: ''
+        };
+
+        if (data()?.session) {
+            options.user = {
+                email: user()?.email,
+                name: `${user()?.user_metadata.first_name} ${user()?.user_metadata.last_name}`
+            }
+        }
+
+        Sentry.showReportDialog(options)
+    }
+
+    createEffect(() => {
+        const firstSection = document.querySelector('main section:first-child');
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (reportIssueButton) {
+                    reportIssueButton.style.opacity = entry.isIntersecting ? '0' : '1';
+                }
+            });
+        });
+
+        if (firstSection) {
+            observer.observe(firstSection);
+        }
+    });
 
     return (
         <>
@@ -65,6 +110,14 @@ const App = () => {
                 <FAQs />
                 <Final />
             </main>
+            <button
+                ref={reportIssueButton}
+                type="button"
+                onClick={handleReportIssue}
+                style={{ opacity: '0' }}
+                class="fixed bottom-[100px] -right-[50px] -rotate-[90deg] bg-pink text-white py-1 px-4 border-0 outline-0 appearance-none text-xs font-semibold uppercase transition-opacity">
+                Report issue
+            </button>
         </>
     );
 }
