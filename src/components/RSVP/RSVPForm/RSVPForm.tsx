@@ -66,7 +66,7 @@ const RSVPForm = (props: { isAuthenticated: boolean, invite: ClientInvite | null
         }
 
         let personInvited = 'you';
-        let invitedTo = 'ceremony and reception, starting at 12:00 at The Asylum Chapel';
+        let invitedTo = 'ceremony and reception, starting at midday at The Asylum Chapel';
 
         if (data.invitedTo === InvitedTo.RECEPTION) {
             invitedTo = 'evening reception, starting at 19:00 at The Lordship Pub.'
