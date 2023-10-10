@@ -154,9 +154,9 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                                     )}
                                                 </Field>
                                                 <hr class="my-[40px] border-t border-[#CBCBCB]" />
-                                                <h4 class="text-[18px] md:text-[24px] font-bold mb-[24px]">{user.firstName} {user.lastName}</h4>
-                                                <h5 class="md:text-[18px] font-semibold mb-[24px]">Can you make it?</h5>
-                                                <div class="flex gap-[40px] justify-center">
+                                                <h4 class="mb-[24px] text-[18px] font-bold md:text-[24px]">{user.firstName} {user.lastName}</h4>
+                                                <h5 class="mb-[24px] font-semibold md:text-[18px]">Can you make it?</h5>
+                                                <div class="flex justify-center gap-[40px]">
                                                     <Field
                                                         type="string"
                                                         name={`users.${index()}.isComing`}
@@ -182,8 +182,8 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                             </div>
                                             <Show when={showResponseForm(index())}>
                                                 <div>
-                                                    <h5 class="md:text-[18px] font-semibold mb-[24px]">Do you have any dietary requirements?</h5>
-                                                    <div class="flex gap-[54px] justify-center">
+                                                    <h5 class="mb-[24px] font-semibold md:text-[18px]">Do you have any dietary requirements?</h5>
+                                                    <div class="flex justify-center gap-[54px]">
                                                         <div class="flex flex-col gap-[24px]">
                                                             <Field type="boolean" name={`users.${index()}.isVegan`}>
                                                                 {(field, props) => (
@@ -221,7 +221,7 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                                     </div>
                                                 </div>
                                                 <Show when={Boolean(props.invite.users[index()].other) || getValue(rsvpForm, `users.${index()}.addOther`) === true}>
-                                                    <div class="max-w-[400px] w-full mx-auto">
+                                                    <div class="mx-auto w-full max-w-[400px]">
                                                         <Field type="string" name={`users.${index()}.other`}>
                                                             {(field, props) => (
                                                                 <GenericField {...props} type="text" value={field.value} error={field.error} label="Other dietary requirements" />
@@ -231,7 +231,7 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                                 </Show>
                                             </Show>
                                             <Show when={Boolean(getValue(rsvpForm, `users.${index()}.isComing`)) && !props.isAuthenticated}>
-                                                <div class="max-w-[400px] w-full mx-auto">
+                                                <div class="mx-auto w-full max-w-[400px]">
                                                     <Field type="string" name={`users.${index()}.email`}>
                                                         {(field, props) => (
                                                             <GenericField {...props} type="email" value={field.value} error={field.error} label="Email address" placeholder="email@example.com" />

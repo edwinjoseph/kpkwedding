@@ -50,7 +50,7 @@ export default function Root() {
                         return (
                             <Section>
                                 <Section.Container>
-                                    <div class="text-center max-w-[600px] mx-auto">
+                                    <div class="mx-auto max-w-[600px] text-center">
                                         <Section.Title text="Whoops, something went wrong!"
                                                        class="mb-[20px] md:mb-[20px]" centered/>
                                         <p class="mb-[20px]">We're sorry you were unable to complete what you were

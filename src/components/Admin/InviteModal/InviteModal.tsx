@@ -223,7 +223,7 @@ const InviteModal = (props: InviteModalProps) => {
                 <Modal.Body>
                     <Form onSubmit={handleInviteSubmit}>
                         <Show when={errorMessage() !== null}>
-                            <div class="px-[16px] py-[12px] mb-[16px] bg-red-200">
+                            <div class="mb-[16px] bg-red-200 px-[16px] py-[12px]">
                                 {errorMessage()}
                             </div>
                         </Show>

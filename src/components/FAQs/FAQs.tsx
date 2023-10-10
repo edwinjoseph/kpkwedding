@@ -78,7 +78,7 @@ const FAQs = () => {
         <Section>
             <Section.Container>
                 <Section.Title text="FAQs" centered />
-                <div class="max-w-[680px] mx-auto">
+                <div class="mx-auto max-w-[680px]">
                     <For each={questions}>
                         {(question) => (
                             <FAQItem

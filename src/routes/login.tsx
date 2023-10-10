@@ -4,12 +4,12 @@ import LoginFlowForm from '@components/LoginFlowForm';
 const Login = () => {
     return (
         <>
-            <section class="bg-[#e8e8e8] h-screen flex justify-center flex-col px-[16px]">
-                <div class="max-w-[400px] w-full mx-auto">
-                    <div class="px-[24px] py-[32px] bg-white rounded-md">
+            <section class="flex h-screen flex-col justify-center bg-[#e8e8e8] px-[16px]">
+                <div class="mx-auto w-full max-w-[400px]">
+                    <div class="rounded-md bg-white px-[24px] py-[32px]">
                         <LoginFlowForm />
                     </div>
-                    <A href="/" class="inline-block mt-2">&larr; Back to homepage</A>
+                    <A href="/" class="mt-2 inline-block">&larr; Back to homepage</A>
                 </div>
             </section>
         </>

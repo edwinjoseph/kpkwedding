@@ -88,19 +88,19 @@ const RSVPForm = (props: { isAuthenticated: boolean, invite: ClientInvite | null
     })
 
     return (
-        <div class="max-w-[600px] mx-auto text-center">
+        <div class="mx-auto max-w-[600px] text-center">
             <Show when={invite() === null && !shouldLogin() && !showSubmission()}>
                 <FindInviteForm onSubmit={handleFindInvite} onFound={handleFoundInvite} onRequiresAuth={handleRequiresAuth} />
             </Show>
             <Show when={invite() === null && shouldLogin() && !showSubmission()}>
-                <h3 class="text-[18px] md:text-[24px] font-bold mb-[24px]">Your invitation</h3>
-                <p class="md:text-[18px] mb-[24px]">Welcome back! To edit your RSVP you will need to sign in.</p>
-                <div class="max-w-[400px] mx-auto">
+                <h3 class="mb-[24px] text-[18px] font-bold md:text-[24px]">Your invitation</h3>
+                <p class="mb-[24px] md:text-[18px]">Welcome back! To edit your RSVP you will need to sign in.</p>
+                <div class="mx-auto max-w-[400px]">
                     <LoginFlowForm onEmailSubmit={handleEmailSubmitted} onAuthorised={handleAuthorised} />
                 </div>
             </Show>
             <Show when={invite() !== null && !showSubmission()}>
-                <h3 class="text-[18px] md:text-[24px] font-bold mb-[24px]">Your invitation</h3>
+                <h3 class="mb-[24px] text-[18px] font-bold md:text-[24px]">Your invitation</h3>
                 <p class="md:text-[18px]">{renderInviteDescription()}</p>
                 <InviteResponseForm invite={invite()!} isAuthenticated={props.isAuthenticated} onSubmit={handleOnSubmission} />
             </Show>

@@ -21,7 +21,7 @@ const SelectField: Component<SelectFieldProps> = (props) => {
     return (
         <div>
             {props.label && (
-                <label for={props.name} class="inline-block font-semibold mb-[16px] md:text-[18px]">
+                <label for={props.name} class="mb-[16px] inline-block font-semibold md:text-[18px]">
                     {props.label}
                 </label>
             )}
@@ -29,7 +29,7 @@ const SelectField: Component<SelectFieldProps> = (props) => {
                 {...inputProps}
                 hasError={!!props.error}
             />
-            {props.error && <div id={`${props.name}-error`} class="text-[#F11A41] font-medium mt-1">{props.error}</div>}
+            {props.error && <div id={`${props.name}-error`} class="mt-1 font-medium text-[#F11A41]">{props.error}</div>}
         </div>
     );
 }

@@ -20,11 +20,11 @@ const CheckboxInput = (props: CheckboxInputProps) => {
     const [, inputProps ] = splitProps(props, ['class', 'label']);
     return (
         <div class={cx('inline-block', props.class)}>
-            <label for={props.name} class="flex gap-6 items-center cursor-pointer">
+            <label for={props.name} class="flex cursor-pointer items-center gap-6">
                 <input
                     type="checkbox"
                     id={props.name}
-                    class="appearance-none w-6 h-6 border-2 border-[#8D8D8D] rounded bg-white shrink-0 checked:bg-pink checked:border-0 cursor-pointer peer hover:border-pink"
+                    class="peer h-6 w-6 shrink-0 cursor-pointer appearance-none rounded border-2 border-[#8D8D8D] bg-white checked:border-0 checked:bg-pink hover:border-pink"
                     {...inputProps}
                 />
                 <span class="select-none text-[18px]">{props.label}</span>
@@ -32,7 +32,7 @@ const CheckboxInput = (props: CheckboxInputProps) => {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="none"
-                    class="absolute w-6 h-6 hidden peer-checked:block">
+                    class="absolute hidden h-6 w-6 peer-checked:block">
                     <path d="M5 11.5L9.5 16L18 7.5" stroke="white" stroke-width="2"/>
                 </svg>
             </label>

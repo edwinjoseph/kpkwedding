@@ -4,7 +4,7 @@ interface LabelErrorProps {
 }
 
 const LabelError = (props: LabelErrorProps) => (
-    <label id={`${props.name}-error`} class="inline-block text-[#F11A41] font-medium mt-1" for={props.name}>{props.text}</label>
+    <label id={`${props.name}-error`} class="mt-1 inline-block font-medium text-[#F11A41]" for={props.name}>{props.text}</label>
 );
 
 export default LabelError;

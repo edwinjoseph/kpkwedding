@@ -77,10 +77,10 @@ const FindInviteForm = (props: FindInviteFormProps) => {
 
     return (
         <Form onSubmit={handleFindInvite}>
-            <p class="md:text-[18px] mb-[16px]">Please respond by</p>
-            <p class="md:text-[18px] mb-[16px] font-semibold">1 May 2025</p>
+            <p class="mb-[16px] md:text-[18px]">Please respond by</p>
+            <p class="mb-[16px] font-semibold md:text-[18px]">1 May 2025</p>
             <p class="md:text-[18px]">Enter your first and last name to find your invite.</p>
-            <div class="max-w-[480px] mx-auto my-[24px]">
+            <div class="mx-auto my-[24px] max-w-[480px]">
                 <div class="flex gap-x-4">
                     <Field type="string" name="firstName">
                         {(field, props) => (

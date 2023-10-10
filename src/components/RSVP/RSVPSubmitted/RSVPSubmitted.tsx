@@ -26,11 +26,11 @@ const RSVPSubmitted = (props: { invite: ClientInvite, onChangeResponse: () => vo
     return (
         <>
             <Show when={someAreComing}>
-                <div class="flex justify-center mt-10">
+                <div class="mt-10 flex justify-center">
                     <Tick />
                 </div>
             </Show>
-            <div class="text-lg mt-10">
+            <div class="mt-10 text-lg">
                 <Show when={allAreComing}>
                     <p>Thanks, we can’t wait to see you on the day!</p>
                     <p class="mt-4">Please check out our FAQs below if you have any questions.</p>
@@ -45,7 +45,7 @@ const RSVPSubmitted = (props: { invite: ClientInvite, onChangeResponse: () => vo
                     <p class="mt-4">Feel free to edit your response before <strong>1 May 2024</strong> or contact us if anything changes.</p>
                 </Show>
             </div>
-            <div class="flex flex-col gap-4 mt-10 max-w-[350px] mx-auto">
+            <div class="mx-auto mt-10 flex max-w-[350px] flex-col gap-4">
                 <Show when={someAreComing}>
                     <SubmitButton text="Add to calender" onClick={handleAddToCalendar} />
                 </Show>

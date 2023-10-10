@@ -23,7 +23,7 @@ const GenericField: Component<GenericFieldProps> = (props) => {
     return (
         <div class={props.class}>
             <Show when={props.label}>
-                <label for={props.name} class="inline-block font-semibold mb-[16px] md:text-[18px]">
+                <label for={props.name} class="mb-[16px] inline-block font-semibold md:text-[18px]">
                     {props.label}
                 </label>
             </Show>

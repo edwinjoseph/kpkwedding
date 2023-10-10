@@ -4,9 +4,9 @@ interface StatusCardProps {
 }
 
 const StatusCard = (props: StatusCardProps) => (
-    <div class="bg-white text-center aspect-[2/1] flex flex-col justify-center items-center shadow rounded-md">
-        <h2 class="text-2xl font-bold lg:text-4xl lg:mb-2">{props.count === 0 ? '-' : props.count}</h2>
-        <p class="text-sm font-semibold lg:text-xl uppercase text-gray-600">{props.label}</p>
+    <div class="flex aspect-[2/1] flex-col items-center justify-center rounded-md bg-white text-center shadow">
+        <h2 class="text-2xl font-bold lg:mb-2 lg:text-4xl">{props.count === 0 ? '-' : props.count}</h2>
+        <p class="text-sm font-semibold uppercase text-gray-600 lg:text-xl">{props.label}</p>
     </div>
 );
 

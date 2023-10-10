@@ -22,15 +22,15 @@ const RadioInput = (props: RadioInputProps) => {
 
     return (
         <div class={cx('inline-block', props.class)}>
-            <label for={id} class="flex gap-6 items-center cursor-pointer">
+            <label for={id} class="flex cursor-pointer items-center gap-6">
                 <div class="relative">
                     <input
                         {...inputProps}
                         type="radio"
                         id={id}
-                        class="appearance-none w-6 h-6 border-2 border-[#8D8D8D] rounded-full bg-white shrink-0 float-left checked:bg-pink checked:border-0 cursor-pointer peer hover:border-pink"
+                        class="peer float-left h-6 w-6 shrink-0 cursor-pointer appearance-none rounded-full border-2 border-[#8D8D8D] bg-white checked:border-0 checked:bg-pink hover:border-pink"
                     />
-                    <div class="absolute w-2 h-2 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden peer-checked:block bg-white rounded-full" />
+                    <div class="absolute left-1/2 top-1/2 hidden h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white peer-checked:block" />
                 </div>
                 <span class="select-none text-[18px]">{props.label}</span>
             </label>

@@ -66,16 +66,16 @@ const Admin = () => {
     const [ showInviteModal, setShowInviteModal ] = createSignal<boolean>(false);
 
     return (
-        <main class="min-h-screen bg-gray-100 overflow-hidden">
+        <main class="min-h-screen overflow-hidden bg-gray-100">
             <Section class="my-6 md:my-8">
                 <Section.Container>
-                    <div class="flex justify-between items-center mt-[24px] mb-[24px]">
+                    <div class="my-[24px] flex items-center justify-between">
                         <Section.Title heading="h1" text="Dashboard" class="mb-0 md:mb-0" />
                         <Show when={getInvites().length > 0}>
                             <SubmitButton text="Add an invite" class="text-[14px]" onClick={() => setShowInviteModal(true)} />
                         </Show>
                     </div>
-                    <div class="grid gap-4 grid-cols-2 md:grid-cols-4">
+                    <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
                         <StatusCard count={getInvites().length} label="Invited" />
                         <StatusCard count={getUnconfirmed().length} label="Unconfirmed" />
                         <StatusCard count={getAttending().length} label="Attending" />
@@ -83,19 +83,19 @@ const Admin = () => {
                     </div>
                 </Section.Container>
             </Section>
-            <Section class="mt-[56px] mb-6 md:mt-[56px] md:mb-6 ">
+            <Section class="mb-6 mt-[56px] md:mb-6 md:mt-[56px] ">
                 <Section.Container>
                     <Show when={getInvites().length === 0}>
                         <div class="mt-[64px]">
                             <h2 class="text-center font-bold md:text-2xl">You haven't invited anyone yet, why not do so now</h2>
-                            <div class="text-center mt-[24px]">
+                            <div class="mt-[24px] text-center">
                                 <SubmitButton text="Add an invite" class="text-[14px]" onClick={() => setShowInviteModal(true)} />
                             </div>
                         </div>
                     </Show>
                     <Show when={getUnconfirmed().length > 0}>
                         <div class="mb-[56px]">
-                            <h2 class="font-bold md:text-2xl mb-6">Unconfirmed ({getUnconfirmed().length})</h2>
+                            <h2 class="mb-6 font-bold md:text-2xl">Unconfirmed ({getUnconfirmed().length})</h2>
                             <div class="flex flex-col gap-2">
                                 <For each={getUnconfirmed()}>
                                     {(invite) => (
@@ -108,7 +108,7 @@ const Admin = () => {
                     <Show when={getAttending().length > 0}>
                         <div class="mb-[56px]">
                             <div>
-                                <h2 class="font-bold md:text-2xl mb-6">Attending ({getAttending().length})</h2>
+                                <h2 class="mb-6 font-bold md:text-2xl">Attending ({getAttending().length})</h2>
                             </div>
                             <div class="flex flex-col gap-2">
                                 <For each={getAttending()}>
@@ -121,7 +121,7 @@ const Admin = () => {
                     </Show>
                     <Show when={getDeclined().length > 0}>
                         <div class="mb-[56px]">
-                            <h2 class="font-bold md:text-2xl mb-6">Declined ({getDeclined().length})</h2>
+                            <h2 class="mb-6 font-bold md:text-2xl">Declined ({getDeclined().length})</h2>
                             <div class="flex flex-col gap-2">
                                 <For each={getDeclined()}>
                                     {(invite) => (

@@ -16,7 +16,7 @@ const LearnMoreIcon = (props: LearnMoreIconProps) => {
                   35,35 0 1,1 -90,0
                 "
             />
-            <g class="motion-safe:animate-spin-slow origin-center">
+            <g class="origin-center motion-safe:animate-spin-slow">
                 <text>
                     <textPath
                         href="#circlePath"

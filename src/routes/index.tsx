@@ -96,10 +96,10 @@ const App = () => {
 
     return (
         <>
-            <header class="bg-white fixed w-full z-10 top-0">
-                <div class="flex justify-between px-4 py-6 max-w-[1440px] mx-auto md:px-10">
-                    <p class="uppercase font-bold tracking-[3px] md:tracking-[4px]">London</p>
-                    <p class="uppercase font-bold tracking-[3px] md:tracking-[4px] before:content-['16.08.24'] md:before:content-['16_august_2024']" />
+            <header class="fixed top-0 z-10 w-full bg-white">
+                <div class="mx-auto flex max-w-[1440px] justify-between px-4 py-6 md:px-10">
+                    <p class="font-bold uppercase tracking-[3px] md:tracking-[4px]">London</p>
+                    <p class="font-bold uppercase tracking-[3px] before:content-['16.08.24'] md:tracking-[4px] md:before:content-['16_august_2024']" />
                 </div>
             </header>
             <main class="mt-[72px]">
@@ -116,7 +116,7 @@ const App = () => {
                 type="button"
                 onClick={handleReportIssue}
                 style={{ opacity: '0' }}
-                class="fixed bottom-[100px] -right-[50px] -rotate-[90deg] bg-pink text-white py-1 px-4 border-0 outline-0 appearance-none text-xs font-semibold uppercase transition-opacity">
+                class="fixed bottom-[100px] right-[-50px] rotate-[-90deg] appearance-none border-0 bg-pink px-4 py-1 text-xs font-semibold uppercase text-white outline-0 transition-opacity">
                 Report issue
             </button>
         </>

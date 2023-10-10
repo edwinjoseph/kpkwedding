@@ -20,7 +20,7 @@ const Section: SectionComponent = (props) => (
 );
 
 Section.Container = ({ children }) => (
-    <div class="px-4 md:px-10 max-w-[1440px] w-full mx-auto">
+    <div class="mx-auto w-full max-w-[1440px] px-4 md:px-10">
         {children}
     </div>
 );
@@ -30,7 +30,7 @@ Section.Title = ({ text, subtitle, heading, centered, ...props }) => (
         'text-center': centered,
     }, props.class))}>
         {subtitle && (
-            <span class="font-body uppercase block text-sm mb-4 md:text-xl md:mb-6 font-bold tracking-[5px] text-pink">{subtitle}</span>
+            <span class="mb-4 block font-body text-sm font-bold uppercase tracking-[5px] text-pink md:mb-6 md:text-xl">{subtitle}</span>
         )}
         {text}
     </Dynamic>

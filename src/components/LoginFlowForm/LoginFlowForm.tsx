@@ -143,7 +143,7 @@ const LoginFlowForm = (props: LoginFlowFormProps) => {
             <Show when={showOPTForm()}>
                 <OTPForm email={email()!} onSubmit={handleOTPSubmit} setFormError={setFormError} />
                 <div class="text-center">
-                    <a onClick={() => setShowOPTForm(false)} class="inline-block text-gray-600 mt-2 underline cursor-pointer">Use a different email address</a>
+                    <a onClick={() => setShowOPTForm(false)} class="mt-2 inline-block cursor-pointer text-gray-600 underline">Use a different email address</a>
                 </div>
             </Show>
 

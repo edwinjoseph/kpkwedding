@@ -2,9 +2,9 @@ import Section from '../Section';
 import LocationCard from './LocationCard';
 
 const Locations = () => (
-    <Section class="relative bg-slate-700 bg-[url('/assets/map-mobile.jpg')] md:bg-[url('/assets/map.jpg')] bg-cover bg-center py-10 before:content-[''] before:w-full before:h-full before:absolute before:top-0 before:left-0 before:bg-gradient-to-b before:from-white before:to-45%">
+    <Section class="relative bg-slate-700 bg-[url('/assets/map-mobile.jpg')] bg-cover bg-center py-10 before:absolute before:left-0 before:top-0 before:h-full before:w-full before:bg-gradient-to-b before:from-white before:to-45% before:content-[''] md:bg-[url('/assets/map.jpg')]">
         <Section.Container>
-            <div class="relative flex items-center gap-10 flex-col md:flex-row md:gap-15 md:justify-center lg:gap-20">
+            <div class="relative flex flex-col items-center gap-10 md:flex-row md:justify-center md:gap-16 lg:gap-20">
                 <LocationCard
                     image="/assets/asylum-chapel.jpg"
                     title="The Ceremony"

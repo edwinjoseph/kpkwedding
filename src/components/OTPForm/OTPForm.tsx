@@ -136,7 +136,7 @@ const OTPForm = ({ email, onSubmit, setFormError }: OTPFormProps) => {
                                     inputmode="numeric"
                                     pattern="[0-9]"
                                     max={1}
-                                    class="py-0 px-0 aspect-[1/1] text-center"
+                                    class="aspect-[1/1] p-0 text-center"
                                     autocomplete="off"
                                 />
                             </div>
