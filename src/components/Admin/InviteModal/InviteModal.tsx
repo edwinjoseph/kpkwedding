@@ -15,7 +15,7 @@ import SelectField from '@components/SelectField';
 import SubmitButton from '@components/SubmitButton';
 import { createSignal, For, JSXElement, Show } from 'solid-js';
 import GenericField from '@components/GenericField';
-import cx from 'classnames';
+import twcx from '@utils/tailwind-cx';
 import { refetchRouteData } from 'solid-start';
 import {ErrorCodes} from '@utils/error-codes';
 
@@ -52,7 +52,7 @@ const PersonCard = (props: {
     children: JSXElement,
 }) => (
     <div class="my-[16px]">
-        <div class={cx({
+        <div class={twcx({
             'hidden': !props.isEditingMe
         })}>
             {props.children}

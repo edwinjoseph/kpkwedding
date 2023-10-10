@@ -1,6 +1,6 @@
 import { Collapse } from 'solid-collapse';
-import cx from 'classnames';
 import RichText from '@components/RichText';
+import twcx from '@utils/tailwind-cx';
 
 export interface FAQItemProps {
     title: string;
@@ -14,7 +14,7 @@ const FAQItem = ({ title, content, isOpen, onClick }: FAQItemProps) => (
         <button class="flex w-full items-center justify-between gap-x-2 py-4 md:py-6" onClick={onClick}>
             <h3 class="text-left font-bold md:text-2xl">{title}</h3>
             <div
-                class={cx('relative w-6 h-0.5 top-1/2 bg-[#8D8D8D] shrink-0 before:content-[""] before:block before:absolute before:h-3 before:w-0.5 before:bg-[#8D8D8D] before:-top-[11px] before:left-1/2 before:-translate-x-1/2 before:origin-bottom before:transition-transform after:content-[""] after:block after:absolute after:h-3 after:top-px after:w-0.5 after:bg-[#8D8D8D] after:left-1/2 after:origin-top after:-translate-x-1/2 after:transition-transform', {
+                class={twcx('relative w-6 h-0.5 top-1/2 bg-[#8D8D8D] shrink-0 before:content-[""] before:block before:absolute before:h-3 before:w-0.5 before:bg-[#8D8D8D] before:-top-[11px] before:left-1/2 before:-translate-x-1/2 before:origin-bottom before:transition-transform after:content-[""] after:block after:absolute after:h-3 after:top-px after:w-0.5 after:bg-[#8D8D8D] after:left-1/2 after:origin-top after:-translate-x-1/2 after:transition-transform', {
                     'after:scale-y-100': !isOpen(),
                     'before:scale-y-100': !isOpen(),
                     'after:scale-y-0': isOpen(),

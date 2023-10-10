@@ -2,7 +2,7 @@ import Section from '../Section';
 import BackToTopIcon from '../BackToTopIcon';
 
 const Final = () => (
-    <Section class="md:mb-20">
+    <Section class="mb-20 md:mb-20">
         <Section.Container>
             <picture>
                 <source media="(max-width: 767px)" srcset="/assets/final-mobile.jpg" />

@@ -1,5 +1,5 @@
 import { JSX, splitProps } from 'solid-js';
-import cx from 'classnames';
+import twcx from '@utils/tailwind-cx';
 
 interface RadioInputProps {
     name: string;
@@ -21,7 +21,7 @@ const RadioInput = (props: RadioInputProps) => {
     const id = `${props.name}:${props.value}`;
 
     return (
-        <div class={cx('inline-block', props.class)}>
+        <div class={twcx('inline-block', props.class)}>
             <label for={id} class="flex cursor-pointer items-center gap-6">
                 <div class="relative">
                     <input

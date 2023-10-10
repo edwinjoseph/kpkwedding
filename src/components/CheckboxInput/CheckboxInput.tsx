@@ -1,5 +1,5 @@
 import { splitProps, JSX } from "solid-js";
-import cx from 'classnames';
+import twcx from '@utils/tailwind-cx';
 
 interface CheckboxInputProps {
     name: string;
@@ -19,7 +19,7 @@ interface CheckboxInputProps {
 const CheckboxInput = (props: CheckboxInputProps) => {
     const [, inputProps ] = splitProps(props, ['class', 'label']);
     return (
-        <div class={cx('inline-block', props.class)}>
+        <div class={twcx('inline-block', props.class)}>
             <label for={props.name} class="flex cursor-pointer items-center gap-6">
                 <input
                     type="checkbox"

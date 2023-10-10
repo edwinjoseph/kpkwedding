@@ -1,5 +1,5 @@
 import { Component, Show, JSX, JSXElement } from 'solid-js';
-import cx from 'classnames';
+import twcx from '@utils/tailwind-cx';
 
 type ModalComponent = Component<{
     isOpen: boolean;
@@ -24,7 +24,7 @@ const Modal: ModalComponent = (props) => {
             id="modal-backdrop"
             tabindex={props.isOpen ? '0' : '-1'}
             aria-hidden={props.isOpen ? 'false' : 'true'}
-            class={cx('fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-screen max-h-full bg-gray-800/25 flex justify-center items-center', {
+            class={twcx('fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-screen max-h-full bg-gray-800/25 flex justify-center items-center', {
                 'hidden': !props.isOpen,
             })}
             onClick={handleClickBackdrop}>

@@ -1,5 +1,5 @@
-import cx from 'classnames';
 import { JSX, splitProps } from 'solid-js';
+import twcx from '@utils/tailwind-cx';
 
 interface GenericInputProps {
     name: string;
@@ -27,7 +27,7 @@ const GenericInput = (props: GenericInputProps) => {
     return (
         <input
             {...inputProps}
-            class={cx('w-full py-[12px] px-[20px] bg-white border border-[#CBCBCB] outline-none focus:border-[#D98E92]', props.class, {
+            class={twcx('w-full py-[12px] px-[20px] bg-white border border-[#CBCBCB] outline-none focus:border-[#D98E92]', props.class, {
                 'border-[#F11A41] focus:border-[#F11A41]': props.hasError,
                 'border-[#000]': !!props.value && !props.hasError,
                 'pointer-events-none': props.disabled,
