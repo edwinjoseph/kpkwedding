@@ -59,7 +59,8 @@ const App = () => {
     const user = () => (!data() || !data()?.session) ? null : data()!.session!.user;
 
     const handleReportIssue = () => {
-        const eventId = Sentry.captureMessage('User Feedback');
+        const eventId = Sentry.lastEventId();
+
         const options: ReportDialogOptions = {
             eventId,
             title: 'Encountered an issue?',
@@ -97,7 +98,7 @@ const App = () => {
         <>
             <header class="bg-white fixed w-full z-10 top-0">
                 <div class="flex justify-between px-4 py-6 max-w-[1440px] mx-auto md:px-10">
-                    <p class="uppercase font-bold tracking-[3px] md:tracking-[4px]">London</p>
+                    <p class="uppercase font-bold tracking-[3px] md:tracking-[4px]">Peckham, London</p>
                     <p class="uppercase font-bold tracking-[3px] md:tracking-[4px] before:content-['16.08.24'] md:before:content-['16_august_2024']" />
                 </div>
             </header>
