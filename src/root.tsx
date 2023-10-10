@@ -22,6 +22,7 @@ Sentry.init({
     dsn: "https://d03f2ab62d9dd1c88df40ac6a16c5260@o4506021518245888.ingest.sentry.io/4506021530173440",
     maxBreadcrumbs: 50,
     debug: false,
+    enabled: process.env.NODE_ENV === 'production'
 });
 
 export default function Root() {

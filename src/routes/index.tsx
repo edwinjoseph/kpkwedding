@@ -59,7 +59,7 @@ const App = () => {
     const user = () => (!data() || !data()?.session) ? null : data()!.session!.user;
 
     const handleReportIssue = () => {
-        const eventId = Sentry.lastEventId();
+        const eventId = Sentry.captureMessage('User Feedback');
 
         const options: ReportDialogOptions = {
             eventId,
