@@ -95,7 +95,7 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
             noGluten: user.noGluten,
             noNuts: user.noNuts,
             noDairy: user.noDairy,
-            other: user.other,
+            other: user.addOther ? user.other : undefined,
         }));
 
         await updateInvite({
@@ -220,7 +220,7 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <Show when={Boolean(props.invite.users[index()].other) || getValue(rsvpForm, `users.${index()}.addOther`) === true}>
+                                                <Show when={getValue(rsvpForm, `users.${index()}.addOther`) === true || Boolean(props.invite.users[index()].other)}>
                                                     <div class="mx-auto w-full max-w-[400px]">
                                                         <Field type="string" name={`users.${index()}.other`}>
                                                             {(field, props) => (
