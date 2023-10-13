@@ -1,7 +1,7 @@
 import { Component } from 'solid-js';
 import twcx from '@utils/tailwind-cx';
 
-const SubmitButton: Component<{ text: string, class?: string; alt?: boolean, small?: boolean, onClick?: () => void | Promise<void> }> = (props) => (
+const SubmitButton: Component<{ text: string, class?: string; alt?: boolean, small?: boolean, onClick?: () => unknown | Promise<unknown> }> = (props) => (
     <button
         type={props.onClick ? 'button' : 'submit'}
         class={twcx('px-[24px] uppercase font-bold outline-none tracking-[3.2px]', {

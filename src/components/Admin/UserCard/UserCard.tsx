@@ -40,7 +40,7 @@ const UserCard = (props: ClientUser) => (
                 <Coming />
             </div>
         </Show>
-        <Show when={!props.isComing}>
+        <Show when={props.isComing === false}>
             <div>
                 <NotComing />
             </div>

@@ -1,5 +1,6 @@
 // @refresh reload
-import {Suspense} from "solid-js";
+import { Suspense } from "solid-js";
+import { useLocation } from '@solidjs/router';
 import {
     Body,
     ErrorBoundary,
@@ -12,11 +13,12 @@ import {
     Title,
     Link,
 } from "solid-start";
+import { HttpHeader } from "solid-start/server";
 import * as Sentry from '@sentry/browser';
-
-import "./root.css";
+import getHost from '@utils/get-host';
 import Section from '@components/Section';
 import SubmitButton from '@components/SubmitButton';
+import "./root.css";
 
 Sentry.init({
     dsn: "https://d03f2ab62d9dd1c88df40ac6a16c5260@o4506021518245888.ingest.sentry.io/4506021530173440",
@@ -26,13 +28,17 @@ Sentry.init({
 });
 
 export default function Root() {
+    const location = useLocation();
     return (
         <Html lang="en">
+            <HttpHeader name="X-Frame-Options" value="DENY" />
+            <HttpHeader name="X-Content-Type-Options" value="DENY" />
             <Head>
                 <Title>Kezia & James | The Wedding</Title>
                 <Meta charset="utf-8"/>
                 <Meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <Meta name="theme-color" content="#FFFFFF"/>
+                <Meta name="referrer" content={new URL(location.pathname, getHost()).toString()} />
                 <Link rel="preconnect" href="https://fonts.googleapis.com"/>
                 <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
                 <Link
