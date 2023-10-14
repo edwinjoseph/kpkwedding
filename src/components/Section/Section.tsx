@@ -2,13 +2,13 @@ import { Dynamic } from "solid-js/web";
 import { Component, JSXElement } from 'solid-js';
 import twcx from '@utils/tailwind-cx';
 
-type SectionComponent = Component<{ children: JSXElement, class?: string }> & {
+type SectionComponent = Component<{ children: JSXElement, class?: string, ref?: HTMLElement | undefined }> & {
     Container: Component<{ children: JSXElement }>,
     Title: Component<{ text: string, subtitle?: string, heading?: 'h1' | 'h2' | 'h3', centered?: boolean; class?: string; }>
 };
 
 const Section: SectionComponent = (props) => (
-    <section class={twcx('my-20 md:my-[120px]', props.class)}>
+    <section class={twcx('my-20 md:my-[120px]', props.class)} ref={props.ref}>
         {props.children}
     </section>
 );

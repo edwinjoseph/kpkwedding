@@ -53,8 +53,10 @@ export function routeData() {
 }
 
 const App = () => {
-    const data = useRouteData<typeof routeData>();
     let reportIssueButton: HTMLButtonElement | undefined;
+    let heroSection: HTMLElement | undefined;
+    let titleImage: HTMLElement | undefined;
+    const data = useRouteData<typeof routeData>();
 
     const user = () => (!data() || !data()?.session) ? null : data()!.session!.user;
 
@@ -79,18 +81,20 @@ const App = () => {
     }
 
     createEffect(() => {
-        const firstSection = document.querySelector('main section:first-child');
-
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (reportIssueButton) {
                     reportIssueButton.style.opacity = entry.isIntersecting ? '0' : '1';
                 }
+                if (titleImage) {
+                    titleImage.style.top = entry.isIntersecting ? '-5px' : '50%';
+                    titleImage.style.opacity = entry.isIntersecting ? '0' : '1';
+                }
             });
         });
 
-        if (firstSection) {
-            observer.observe(firstSection);
+        if (heroSection) {
+            observer.observe(heroSection);
         }
     });
 
@@ -99,11 +103,16 @@ const App = () => {
             <header class="fixed top-0 z-10 w-full bg-white">
                 <div class="mx-auto flex max-w-[1440px] justify-between px-4 py-6 md:px-10">
                     <p class="font-bold uppercase tracking-[3px] md:tracking-[4px]">London</p>
+                    <picture ref={titleImage} class="absolute top-[-5px] opacity-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-[top_opacity] ease-in-out duration-300">
+                        <source media="(max-width: 767px)" srcset="/assets/title-mobile.svg" />
+                        <source media="(min-width: 768px)" srcset="/assets/title.svg" />
+                        <img src="/assets/title.svg" alt="Kezia & James" loading="eager" />
+                    </picture>
                     <p class="font-bold uppercase tracking-[3px] before:content-['16.08.24'] md:tracking-[4px] md:before:content-['16_august_2024']" />
                 </div>
             </header>
             <main class="mt-[72px]">
-                <Hero />
+                <Hero ref={heroSection} />
                 <Agenda />
                 <Locations />
                 <RSVP isAuthenticated={data()?.isAuthenticated || false} invite={data()?.invite || null} />
