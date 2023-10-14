@@ -20,6 +20,9 @@ module.exports = {
       }
     },
   },
+  safelist: [
+      'transition-colors'
+  ],
   plugins: [],
 }
 
