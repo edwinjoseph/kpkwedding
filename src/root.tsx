@@ -20,13 +20,11 @@ import Section from '@components/Section';
 import SubmitButton from '@components/SubmitButton';
 import "./root.css";
 
-const isProduction = import.meta.env.PROD;
-
 Sentry.init({
     dsn: "https://d03f2ab62d9dd1c88df40ac6a16c5260@o4506021518245888.ingest.sentry.io/4506021530173440",
     maxBreadcrumbs: 50,
     debug: false,
-    enabled: isProduction
+    enabled: process.env.NODE_ENV === 'production'
 });
 
 export default function Root() {
@@ -50,13 +48,10 @@ export default function Root() {
             <Body>
                 <Suspense>
                     <ErrorBoundary fallback={(e: Error) => {
-                        if (isProduction) {
-                            Sentry.captureException(e, {
-                                level: 'error',
-                            });
-                        } else {
-                            console.log(e);
-                        }
+                        Sentry.captureException(e, {
+                            level: 'error',
+
+                        });
 
                         return (
                             <Section>

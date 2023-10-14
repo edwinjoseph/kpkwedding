@@ -1,5 +1,4 @@
 import { onMount, For, createSignal, JSX } from 'solid-js';
-import { isHTMLInputElement } from '@utils/is-type';
 import GenericInput from '@components/GenericInput';
 import SubmitButton from '@components/SubmitButton';
 
@@ -81,6 +80,9 @@ const OTPForm = ({ email, onSubmit, setFormError }: OTPFormProps) => {
         focus(Math.min(index + 1, 5));
     }
 
+    const isHTMLInputElement = (el: unknown): el is HTMLInputElement => {
+        return el instanceof HTMLInputElement;
+    }
 
     onMount(() => {
         document.addEventListener("paste", (event) => {
