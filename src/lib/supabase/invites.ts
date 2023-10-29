@@ -23,7 +23,7 @@ export type SelectInvite = Pick<TableInvite, 'id' | 'invited_to' | 'updated_at'>
     }>
 }
 
-export interface ReturnDBUser {
+export type ReturnDBUser = {
     id: string;
     first_name: string;
     last_name: string;
@@ -37,7 +37,7 @@ export interface ReturnDBUser {
     other: string | null;
 }
 
-export interface ClientUser {
+export type ClientUser = {
     firstName: string;
     lastName: string;
     id?: string;
@@ -51,7 +51,7 @@ export interface ClientUser {
     other?: string;
 }
 
-export interface ClientInvite {
+export type ClientInvite = {
     id: string,
     invitedTo: InvitedTo,
     users: Array<ClientUser>,
