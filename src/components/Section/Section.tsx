@@ -2,8 +2,8 @@ import { Dynamic } from "solid-js/web";
 import { Component, JSXElement } from 'solid-js';
 import twcx from '@utils/tailwind-cx';
 
-type SectionComponent = Component<{ children: JSXElement, class?: string, ref?: HTMLElement | undefined }> & {
-    Container: Component<{ children: JSXElement }>,
+type SectionComponent = Component<{ children: JSXElement, class?: string, ref?: HTMLElement | ((el: HTMLElement) => void) }> & {
+    Container: Component<{ children: JSXElement, isFullWidth?: boolean }>,
     Title: Component<{ text: string, subtitle?: string, heading?: 'h1' | 'h2' | 'h3', centered?: boolean; class?: string; }>
 };
 
@@ -13,8 +13,10 @@ const Section: SectionComponent = (props) => (
     </section>
 );
 
-Section.Container = ({ children }) => (
-    <div class="mx-auto w-full max-w-[1440px] px-4 md:px-10">
+Section.Container = ({ children, isFullWidth }) => (
+    <div class={twcx('mx-auto w-full px-4 md:px-10', {
+        'max-w-[1440px]': !isFullWidth,
+    })}>
         {children}
     </div>
 );

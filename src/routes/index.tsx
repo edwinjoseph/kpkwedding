@@ -1,10 +1,11 @@
-import {createEffect} from 'solid-js';
+import {createEffect, createSignal} from 'solid-js';
 import { useRouteData } from '@solidjs/router';
 import { createServerData$ } from 'solid-start/server';
 import * as Sentry from '@sentry/browser';
 import { ReportDialogOptions } from '@sentry/browser/types/helpers';
 import { getSession } from '@handlers/auth';
 import { getInvite } from '@handlers/invites';
+import twcx from '@utils/tailwind-cx';
 import Hero from '@components/Hero';
 import Agenda from '@components/Agenda';
 import Locations from '@components/Locations';
@@ -52,10 +53,19 @@ export function routeData() {
     })
 }
 
+const isRefHTMLElement = (value: HTMLElement | ((el: HTMLElement) => void) | undefined): value is HTMLElement => {
+    return Boolean(value) && !(value instanceof Function);
+}
+
+const isRefHTMLButtonElement = (value: HTMLButtonElement | ((el: HTMLButtonElement) => void) | undefined): value is HTMLButtonElement => {
+    return Boolean(value) && !(value instanceof Function);
+}
+
 const App = () => {
-    let reportIssueButton: HTMLButtonElement | undefined;
-    let heroSection: HTMLElement | undefined;
-    let titleImage: HTMLElement | undefined;
+    let reportIssueButton: HTMLButtonElement | ((el: HTMLButtonElement) => void) | undefined;
+    let heroSection: HTMLElement | ((el: HTMLElement) => void) | undefined;
+    let titleImage: HTMLElement | ((el: HTMLElement) => void) | undefined;
+    const [ isHeaderFixed, setIsHeaderFixed ] = createSignal(false);
     const data = useRouteData<typeof routeData>();
 
     const user = () => (!data() || !data()?.session) ? null : data()!.session!.user;
@@ -80,28 +90,45 @@ const App = () => {
         Sentry.showReportDialog(options)
     }
 
-    createEffect(() => {
+    const handleHeaderLogo = () => {
+        const height = isRefHTMLElement(heroSection)
+            ? heroSection.getBoundingClientRect().height / 2
+            : 0;
+
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
-                if (reportIssueButton) {
+                if (isRefHTMLButtonElement(reportIssueButton)) {
                     reportIssueButton.style.opacity = entry.isIntersecting ? '0' : '1';
                 }
-                if (titleImage) {
+
+                if (isRefHTMLElement(titleImage)) {
+                    setIsHeaderFixed(!entry.isIntersecting);
                     titleImage.style.top = entry.isIntersecting ? '-5px' : '50%';
                     titleImage.style.opacity = entry.isIntersecting ? '0' : '1';
                 }
             });
-        });
+        }, { rootMargin: `-${height + 80}px 0px 0px 0px` });
 
-        if (heroSection) {
+        if (isRefHTMLElement(heroSection)) {
             observer.observe(heroSection);
+        }
+    }
+
+    createEffect(() => {
+        handleHeaderLogo();
+        window.addEventListener('resize', handleHeaderLogo);
+
+        return () => {
+            window.removeEventListener('resize', handleHeaderLogo);
         }
     });
 
     return (
         <>
-            <header class="fixed top-0 z-10 w-full bg-white">
-                <div class="mx-auto flex max-w-[1440px] justify-between px-4 py-6 md:px-10">
+            <header class={twcx('fixed top-0 z-10 w-full bg-white', {
+                'border-b': isHeaderFixed(),
+            })}>
+                <div class="text-xs mx-auto flex justify-between px-4 py-6 md:text-base md:px-10">
                     <p class="font-bold uppercase tracking-[3px] md:tracking-[4px]">London</p>
                     <picture ref={titleImage} class="absolute top-[-5px] opacity-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-[top_opacity] ease-in-out duration-300">
                         <source media="(max-width: 767px)" srcset="/assets/title-mobile.svg" />
@@ -111,7 +138,7 @@ const App = () => {
                     <p class="font-bold uppercase tracking-[3px] before:content-['16.08.24'] md:tracking-[4px] md:before:content-['16_august_2024']" />
                 </div>
             </header>
-            <main class="mt-[72px]">
+            <main class="mt-[64px] md:mt-[72px]">
                 <Hero ref={heroSection} />
                 <Agenda />
                 <Locations />
