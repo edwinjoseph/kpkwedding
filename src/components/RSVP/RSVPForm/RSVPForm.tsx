@@ -1,32 +1,45 @@
-import {createEffect, createSignal, Show} from 'solid-js';
+import { createEffect, createSignal, Ref, Show } from 'solid-js';
 import { refetchRouteData } from 'solid-start';
 import { ClientInvite, InvitedTo } from '@lib/supabase/invites';
+import { isRefHTMLElement } from '@utils/is-type';
+import { verifyInvite } from '@handlers/invites';
 import FindInviteForm, { FindInviteFormProps, FindInviteFormType } from '@components/RSVP/FindInviteForm';
 import LoginFlowForm from '@components/LoginFlowForm';
 import InviteResponseForm from '@components/RSVP/InviteResponseForm';
 import RSVPSubmitted from '@components/RSVP/RSVPSubmitted';
-import {verifyInvite} from '@handlers/invites';
 import APIError from '@errors/APIError';
 
-const RSVPForm = (props: { isAuthenticated: boolean, invite: ClientInvite | null }) => {
+const RSVPForm = (props: { rsvpRef: Ref<HTMLElement>, isAuthenticated: boolean, invite: ClientInvite | null }) => {
     const [ findInviteData, setFindInviteData ] = createSignal<FindInviteFormType | null>(null)
     const [ invite, setInvite ] = createSignal<ClientInvite | null>(props.invite || null);
     const [ shouldLogin, setShouldLogin ] = createSignal(props.isAuthenticated || false);
     const [ showSubmission, setShowSubmission ] = createSignal(props.invite && props.isAuthenticated);
 
+    const handleScrollToTop = () => {
+        if (isRefHTMLElement(props.rsvpRef)) {
+            window.scrollTo({
+                top: props.rsvpRef.offsetTop - 120,
+                left: 0,
+            });
+        }
+    }
+
     const handleFindInvite: FindInviteFormProps['onSubmit'] = (values) => {
         setFindInviteData(values);
+        handleScrollToTop();
     }
 
     const handleFoundInvite: FindInviteFormProps['onFound'] = (invite) => {
         if (invite) {
             setInvite(invite);
+            handleScrollToTop();
         }
     }
 
     const handleRequiresAuth = () => {
         if (!props.isAuthenticated) {
             setShouldLogin(true);
+            handleScrollToTop();
             return;
         }
     }
@@ -44,18 +57,22 @@ const RSVPForm = (props: { isAuthenticated: boolean, invite: ClientInvite | null
             email: email
         });
 
+        handleScrollToTop();
+
         if (res.error) {
             throw new APIError('Email address provided does not match with email address linked', res.error.code);
         }
     }
 
     const handleAuthorised = async () => {
+        handleScrollToTop();
         await refetchRouteData(['invite']);
     }
 
     const handleOnSubmission = (invite: ClientInvite) => {
         setInvite(invite);
         setShowSubmission(true);
+        handleScrollToTop();
     }
 
     const renderInviteDescription = () => {

@@ -1,10 +1,10 @@
 import { Dynamic } from "solid-js/web";
-import { Component, JSXElement } from 'solid-js';
+import { Component, JSXElement, Ref } from 'solid-js';
 import twcx from '@utils/tailwind-cx';
 
-type SectionComponent = Component<{ children: JSXElement, class?: string, ref?: HTMLElement | ((el: HTMLElement) => void) }> & {
-    Container: Component<{ children: JSXElement, isFullWidth?: boolean }>,
-    Title: Component<{ text: string, subtitle?: string, heading?: 'h1' | 'h2' | 'h3', centered?: boolean; class?: string; }>
+type SectionComponent = Component<{ children: JSXElement, class?: string, ref?: Ref<HTMLElement> }> & {
+    Container: Component<{ children: JSXElement; isFullWidth?: boolean; ref?: Ref<HTMLElement> }>,
+    Title: Component<{ text: string, subtitle?: string, heading?: 'h1' | 'h2' | 'h3', centered?: boolean; class?: string; ref?: Ref<HTMLHeadingElement>; }>
 };
 
 const Section: SectionComponent = (props) => (
@@ -24,7 +24,7 @@ Section.Container = ({ children, isFullWidth }) => (
 Section.Title = ({ text, subtitle, heading, centered, ...props }) => (
     <Dynamic component={heading || 'h2'} class={twcx(`font-heading mb-16 text-[32px] md:mb-20 md:text-[64px]`, {
         'text-center': centered,
-    }, props.class)}>
+    }, props.class)} ref={props.ref}>
         {subtitle && (
             <span class="mb-4 block font-body text-sm font-bold uppercase tracking-[5px] text-pink md:mb-6 md:text-xl">{subtitle}</span>
         )}

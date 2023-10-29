@@ -12,7 +12,7 @@ const Final = () => {
 
     return (
         <Section class="mb-20 md:mb-20">
-            <Section.Container>
+            <Section.Container isFullWidth>
                 <picture>
                     <source media="(max-width: 767px)" srcset="/assets/final-mobile.jpg" />
                     <source media="(min-width: 768px)" srcset="/assets/final.jpg" />

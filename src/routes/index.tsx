@@ -6,6 +6,7 @@ import { ReportDialogOptions } from '@sentry/browser/types/helpers';
 import { getSession } from '@handlers/auth';
 import { getInvite } from '@handlers/invites';
 import twcx from '@utils/tailwind-cx';
+import { isRefHTMLButtonElement, isRefHTMLElement } from '@utils/is-type';
 import Hero from '@components/Hero';
 import Agenda from '@components/Agenda';
 import Locations from '@components/Locations';
@@ -51,14 +52,6 @@ export function routeData() {
             invite: null,
         }
     })
-}
-
-const isRefHTMLElement = (value: HTMLElement | ((el: HTMLElement) => void) | undefined): value is HTMLElement => {
-    return Boolean(value) && !(value instanceof Function);
-}
-
-const isRefHTMLButtonElement = (value: HTMLButtonElement | ((el: HTMLButtonElement) => void) | undefined): value is HTMLButtonElement => {
-    return Boolean(value) && !(value instanceof Function);
 }
 
 const App = () => {
