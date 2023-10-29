@@ -31,11 +31,13 @@ export default function Root() {
     const location = useLocation();
     return (
         <Html lang="en">
+            <HttpHeader name="Strict-Transport-Security" value="max-age=63072000; includeSubDomains; preload;" />
             <HttpHeader name="X-Frame-Options" value="DENY" />
             <HttpHeader name="X-Content-Type-Options" value="DENY" />
             <Head>
                 <Title>Kezia & James | The Wedding</Title>
                 <Meta charset="utf-8"/>
+                <Link rel="icon" type="image/png" href="/favicon.png" sizes="16x16" />
                 <Meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <Meta name="theme-color" content="#FFFFFF"/>
                 <Meta name="referrer" content={new URL(location.pathname, getHost()).toString()} />
