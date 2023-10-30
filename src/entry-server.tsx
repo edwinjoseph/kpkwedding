@@ -6,7 +6,10 @@ import {
     Middleware,
 } from "solid-start/entry-server";
 import superbase from '@lib/supabase/server';
+import EmailClient from '@lib/email';
 import getHost, { allowedHosts } from '@utils/get-host';
+
+EmailClient.initialize(process.env.SMTP_API_KEY as string);
 
 const enableCors: Middleware = ({ forward }) => async (event) => {
     const url = new URL(event.request.url);

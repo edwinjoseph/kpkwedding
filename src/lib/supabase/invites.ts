@@ -1,12 +1,13 @@
-import { PostgrestSingleResponse, SupabaseClient } from '@supabase/supabase-js';
+import {PostgrestSingleResponse, SupabaseClient} from '@supabase/supabase-js';
 import camelCase from 'lodash/camelCase';
-import deepMapKeys from '@utils/deep-map-keys';
-import { Database } from '@lib/supabase/database.types';
+import EmailClient, {EmailTemplate} from '@lib/email';
+import {Database} from '@lib/supabase/database.types';
 import {getOrCreateUser, isAuthenticated} from '@lib/supabase/users';
-import APIError from '@errors/APIError';
-import { ErrorCodes } from '@utils/error-codes';
-import { findByClientUserName } from '@lib/supabase/utils/findByClientUser';
+import {findByClientUserName} from '@lib/supabase/utils/findByClientUser';
 import buildInvite from '@lib/supabase/utils/buildInvite';
+import deepMapKeys from '@utils/deep-map-keys';
+import APIError from '@errors/APIError';
+import {ErrorCodes} from '@utils/error-codes';
 
 export enum InvitedTo {
     CEREMONY = 'CEREMONY',
@@ -363,12 +364,23 @@ export const updateInvite = async (supabase: SupabaseClient<Database>, values: U
     for (const dbUser of usersRes.data) {
         const user = values.users.find(findByClientUserName(dbUser))!;
         let user_id = dbUser.user_id;
+        let user_email = user.email;
 
         if (!user_id) {
-            const userData = await getOrCreateUser(supabase, { email: user.email!, firstName: dbUser.first_name, lastName: dbUser.last_name });
+            const userData = await getOrCreateUser(supabase, {
+                email: user.email!,
+                firstName: dbUser.first_name,
+                lastName: dbUser.last_name
+            });
             user_id = userData.id;
         } else {
+            const userData = await getOrCreateUser(supabase, {
+                id: user_id,
+                firstName: dbUser.first_name,
+                lastName: dbUser.last_name
+            });
             const session = await isAuthenticated(supabase);
+            user_email = userData.email!;
             authFailed = dbUser.user_id !== session.user.id;
         }
 
@@ -376,8 +388,8 @@ export const updateInvite = async (supabase: SupabaseClient<Database>, values: U
             user_id,
             id: dbUser.id,
             first_name: dbUser.first_name,
-            last_name: dbUser.first_name,
-            email: user.email,
+            last_name: dbUser.last_name,
+            email: user_email,
             is_coming: user.isComing,
             is_vegan: user.isVegan,
             is_vegetarian: user.isVegetarian,
@@ -470,6 +482,41 @@ export const updateInvite = async (supabase: SupabaseClient<Database>, values: U
 
         console.error(error);
         throw new APIError('Unknown error', ErrorCodes.UNKNOWN);
+    }
+
+    try {
+        const inviteRes = await supabase.schema('rsvp')
+            .from('invites')
+            .select('*')
+            .eq('id', values.id)
+            .limit(1)
+            .single();
+
+        if (inviteRes.data) {
+            Promise.all(users.map(user => {
+                const existingUser = usersRes.data.find(dbUser => dbUser.id === user.id);
+                if (!existingUser || existingUser.is_coming === user.is_coming) {
+                    return;
+                }
+
+                return EmailClient.sendIndividualEmail(
+                    {
+                        email: user.email!,
+                        name: `${user.first_name} ${user.last_name}`,
+                    },
+                    user.is_coming ? EmailTemplate.RSVP_IS_COMING : EmailTemplate.RSVP_IS_NOT_COMING,
+                    {
+                        params: {
+                            FIRST_NAME: user.first_name,
+                            LAST_NAME: user.last_name,
+                            EVENT_TYPE: inviteRes.data.invited_to === InvitedTo.CEREMONY ? 'wedding' : 'evening celebrations'
+                        }
+                    }
+                );
+            })).then(() => {}).catch(() => {});
+        }
+    } catch (err) {
+        console.error(err);
     }
     
     return values.id;

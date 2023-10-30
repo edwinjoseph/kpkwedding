@@ -15,19 +15,30 @@ export const isAuthenticated = async (supabase: SupabaseClient<Database>, userId
 }
 
 export interface GetOrCreateUser {
-    email: string;
+    email?: string;
+    id?: string;
     firstName: string;
     lastName: string;
 }
 
 export const getOrCreateUser = async (supabase: SupabaseClient<Database>, values: GetOrCreateUser): Promise<User> => {
+    if (!values.email && !values.id) {
+        throw new APIError('You must provide either an email or user id.', ErrorCodes.UNKNOWN);
+    }
+
     const usersRes = await supabase.auth.admin.listUsers();
 
     if (usersRes.error) {
         throw new APIError('Unable to find users', ErrorCodes.UNKNOWN);
     }
 
-    const user = usersRes.data.users.find(user => user.email === values.email);
+    const user = usersRes.data.users.find(user => {
+        if (values.email) {
+            return user.email === values.email
+        }
+
+        return user.id === values.id;
+    });
 
     if (user && user.user_metadata.first_name !== values.firstName && user.user_metadata.last_name !== values.lastName) {
         throw new APIError('User mismatch', ErrorCodes.AUTH_NOT_AUTHORISED);
@@ -37,8 +48,10 @@ export const getOrCreateUser = async (supabase: SupabaseClient<Database>, values
         return user;
     }
 
-    const createUserRes = await supabase.auth.admin.inviteUserByEmail(values.email, {
-        data: {
+    const createUserRes = await supabase.auth.admin.createUser({
+        email: values.email,
+        email_confirm: true,
+        user_metadata: {
             first_name: values.firstName,
             last_name: values.lastName,
         }
