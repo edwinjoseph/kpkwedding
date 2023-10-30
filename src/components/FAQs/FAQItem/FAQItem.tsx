@@ -10,7 +10,7 @@ export interface FAQItemProps {
 }
 
 const FAQItem = ({ title, content, isOpen, onClick }: FAQItemProps) => (
-    <div class="relative border-t border-[#CBCBCB]">
+    <div class="relative border-t">
         <button class="flex w-full items-center justify-between gap-x-2 py-4 md:py-6" onClick={onClick}>
             <h3 class="text-left font-bold md:text-2xl">{title}</h3>
             <div

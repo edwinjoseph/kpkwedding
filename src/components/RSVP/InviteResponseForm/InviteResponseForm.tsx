@@ -155,7 +155,7 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                                         <input type="hidden" {...fieldProps} name={field.name} value={field.value}  />
                                                     )}
                                                 </Field>
-                                                <hr class="my-[40px] border-t border-[#CBCBCB]" />
+                                                <hr class="my-[40px] border-t" />
                                                 <h4 class="mb-[24px] text-[18px] font-bold md:text-[24px]">{user.firstName} {user.lastName}</h4>
                                                 <h5 class="mb-[24px] font-semibold md:text-[18px]">Can you make it?</h5>
                                                 <div class="flex justify-center gap-[40px]">
