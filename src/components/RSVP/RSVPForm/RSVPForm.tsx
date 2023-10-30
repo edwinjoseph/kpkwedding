@@ -1,7 +1,7 @@
 import { createEffect, createSignal, Ref, Show } from 'solid-js';
 import { refetchRouteData } from 'solid-start';
 import { ClientInvite, InvitedTo } from '@lib/supabase/invites';
-import { isRefHTMLElement } from '@utils/is-type';
+import {isRefHTMLHeadingElement} from '@utils/is-type';
 import { verifyInvite } from '@handlers/invites';
 import FindInviteForm, { FindInviteFormProps, FindInviteFormType } from '@components/RSVP/FindInviteForm';
 import LoginFlowForm from '@components/LoginFlowForm';
@@ -9,14 +9,15 @@ import InviteResponseForm from '@components/RSVP/InviteResponseForm';
 import RSVPSubmitted from '@components/RSVP/RSVPSubmitted';
 import APIError from '@errors/APIError';
 
-const RSVPForm = (props: { rsvpRef: Ref<HTMLElement>, isAuthenticated: boolean, invite: ClientInvite | null }) => {
+const RSVPForm = (props: { rsvpRef: Ref<HTMLHeadingElement>, isAuthenticated: boolean, invite: ClientInvite | null }) => {
     const [ findInviteData, setFindInviteData ] = createSignal<FindInviteFormType | null>(null)
     const [ invite, setInvite ] = createSignal<ClientInvite | null>(props.invite || null);
-    const [ shouldLogin, setShouldLogin ] = createSignal(props.isAuthenticated || false);
+    const [ shouldLogin, setShouldLogin ] = createSignal(false);
+    const [ isSubmitted, setIsSubmitted ] = createSignal(false);
     const [ showSubmission, setShowSubmission ] = createSignal(props.invite && props.isAuthenticated);
 
     const handleScrollToTop = () => {
-        if (isRefHTMLElement(props.rsvpRef)) {
+        if (isRefHTMLHeadingElement(props.rsvpRef)) {
             window.scrollTo({
                 top: props.rsvpRef.offsetTop - 120,
                 left: 0,
@@ -72,6 +73,7 @@ const RSVPForm = (props: { rsvpRef: Ref<HTMLElement>, isAuthenticated: boolean, 
     const handleOnSubmission = (invite: ClientInvite) => {
         setInvite(invite);
         setShowSubmission(true);
+        setIsSubmitted(true);
         handleScrollToTop();
     }
 
@@ -86,7 +88,7 @@ const RSVPForm = (props: { rsvpRef: Ref<HTMLElement>, isAuthenticated: boolean, 
         let invitedTo = 'ceremony and reception, starting at midday at The Asylum Chapel';
 
         if (data.invitedTo === InvitedTo.RECEPTION) {
-            invitedTo = 'evening reception, starting at 19:00 at The Lordship Pub.'
+            invitedTo = 'evening reception, starting at 19:00 at The Lordship Pub'
         }
 
         if (data.users.length === 2) {
@@ -98,7 +100,6 @@ const RSVPForm = (props: { rsvpRef: Ref<HTMLElement>, isAuthenticated: boolean, 
 
     createEffect(() => {
         setInvite(props.invite);
-        setShouldLogin(props.isAuthenticated);
         setShowSubmission(props.invite && props.isAuthenticated);
     })
 
@@ -117,7 +118,12 @@ const RSVPForm = (props: { rsvpRef: Ref<HTMLElement>, isAuthenticated: boolean, 
             <Show when={invite() !== null && !showSubmission()}>
                 <h3 class="mb-[24px] text-[18px] font-bold md:text-[24px]">Your invitation</h3>
                 <p class="md:text-[18px]">{renderInviteDescription()}</p>
-                <InviteResponseForm invite={invite()!} isAuthenticated={props.isAuthenticated} onSubmit={handleOnSubmission} />
+                <InviteResponseForm
+                    invite={invite()!}
+                    isAuthenticated={props.isAuthenticated}
+                    isSubmitted={isSubmitted()}
+                    onSubmit={handleOnSubmission}
+                />
             </Show>
             <Show when={invite() !== null && showSubmission()}>
                 <RSVPSubmitted invite={invite()!} onChangeResponse={() => setShowSubmission(false)}  />

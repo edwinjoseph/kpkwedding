@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import { z } from 'zod';
 import { createForm, getValue, SubmitHandler, zodForm } from '@modular-forms/solid';
 import { For, Show} from 'solid-js';
@@ -57,8 +58,9 @@ type RSVPFormType = z.infer<typeof RSVPSchema>;
 
 interface InviteResponseFormProps {
     isAuthenticated: boolean;
-    invite: ClientInvite
+    invite: ClientInvite;
     onSubmit: (invite: ClientInvite) => void;
+    isSubmitted: boolean;
 }
 
 const InviteResponseForm = (props: InviteResponseFormProps) => {
@@ -133,24 +135,24 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                                     type="string"
                                                     name={`users.${index()}.firstName`}
                                                 >
-                                                    {(field, props) => (
-                                                        <input type="hidden" {...props} name={field.name} value={field.value}  />
+                                                    {(field, fieldProps) => (
+                                                        <input type="hidden" {...fieldProps} name={field.name} value={field.value}  />
                                                     )}
                                                 </Field>
                                                 <Field
                                                     type="string"
                                                     name={`users.${index()}.lastName`}
                                                 >
-                                                    {(field, props) => (
-                                                        <input type="hidden" {...props} name={field.name} value={field.value}  />
+                                                    {(field, fieldProps) => (
+                                                        <input type="hidden" {...fieldProps} name={field.name} value={field.value}  />
                                                     )}
                                                 </Field>
                                                 <Field
                                                     type="string"
                                                     name={`users.${index()}.userId`}
                                                 >
-                                                    {(field, props) => (
-                                                        <input type="hidden" {...props} name={field.name} value={field.value}  />
+                                                    {(field, fieldProps) => (
+                                                        <input type="hidden" {...fieldProps} name={field.name} value={field.value}  />
                                                     )}
                                                 </Field>
                                                 <hr class="my-[40px] border-t border-[#CBCBCB]" />
@@ -161,16 +163,16 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                                         type="string"
                                                         name={`users.${index()}.isComing`}
                                                     >
-                                                        {(field, props) => (
+                                                        {(field, fieldProps) => (
                                                             <>
                                                                 <RadioInput
-                                                                    {...props}
+                                                                    {...fieldProps}
                                                                     label="Yes"
                                                                     value="true"
                                                                     checked={field.value === 'true'}
                                                                 />
                                                                 <RadioInput
-                                                                    {...props}
+                                                                    {...fieldProps}
                                                                     label="No"
                                                                     value="false"
                                                                     checked={field.value === 'false'}
@@ -186,35 +188,35 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                                     <div class="flex justify-center gap-[54px]">
                                                         <div class="flex flex-col gap-[24px]">
                                                             <Field type="boolean" name={`users.${index()}.isVegan`}>
-                                                                {(field, props) => (
-                                                                    <CheckboxInput {...props} label="Vegan" name={field.name} checked={field.value} />
+                                                                {(field, fieldProps) => (
+                                                                    <CheckboxInput {...fieldProps} label="Vegan" name={field.name} checked={field.value} />
                                                                 )}
                                                             </Field>
                                                             <Field type="boolean" name={`users.${index()}.isVegetarian`}>
-                                                                {(field, props) => (
-                                                                    <CheckboxInput {...props} label="Vegetarian" name={field.name} checked={field.value}  />
+                                                                {(field, fieldProps) => (
+                                                                    <CheckboxInput {...fieldProps} label="Vegetarian" name={field.name} checked={field.value}  />
                                                                 )}
                                                             </Field>
                                                             <Field type="boolean" name={`users.${index()}.noGluten`}>
-                                                                {(field, props) => (
-                                                                    <CheckboxInput {...props} label="No gluten" name={field.name} checked={field.value}  />
+                                                                {(field, fieldProps) => (
+                                                                    <CheckboxInput {...fieldProps} label="No gluten" name={field.name} checked={field.value}  />
                                                                 )}
                                                             </Field>
                                                         </div>
                                                         <div class="flex flex-col gap-[24px]">
                                                             <Field type="boolean" name={`users.${index()}.noNuts`}>
-                                                                {(field, props) => (
-                                                                    <CheckboxInput {...props} label="No nuts" name={field.name} checked={field.value}  />
+                                                                {(field, fieldProps) => (
+                                                                    <CheckboxInput {...fieldProps} label="No nuts" name={field.name} checked={field.value}  />
                                                                 )}
                                                             </Field>
                                                             <Field type="boolean" name={`users.${index()}.noDairy`}>
-                                                                {(field, props) => (
-                                                                    <CheckboxInput {...props} label="No dairy" name={field.name} checked={field.value}  />
+                                                                {(field, fieldProps) => (
+                                                                    <CheckboxInput {...fieldProps} label="No dairy" name={field.name} checked={field.value}  />
                                                                 )}
                                                             </Field>
                                                             <Field type="boolean" name={`users.${index()}.addOther`}>
-                                                                {(field, props) => (
-                                                                    <CheckboxInput {...props} label="Other" name={field.name} checked={field.value}  />
+                                                                {(field, fieldProps) => (
+                                                                    <CheckboxInput {...fieldProps} label="Other" name={field.name} checked={field.value}  />
                                                                 )}
                                                             </Field>
                                                         </div>
@@ -223,18 +225,26 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                                 <Show when={getValue(rsvpForm, `users.${index()}.addOther`) === true || Boolean(props.invite.users[index()].other)}>
                                                     <div class="mx-auto w-full max-w-[400px]">
                                                         <Field type="string" name={`users.${index()}.other`}>
-                                                            {(field, props) => (
-                                                                <GenericField {...props} type="text" value={field.value} error={field.error} label="Other dietary requirements" />
+                                                            {(field, fieldProps) => (
+                                                                <GenericField {...fieldProps} type="text" value={field.value} error={field.error} label="Other dietary requirements" />
                                                             )}
                                                         </Field>
                                                     </div>
                                                 </Show>
                                             </Show>
-                                            <Show when={Boolean(getValue(rsvpForm, `users.${index()}.isComing`)) && !props.isAuthenticated}>
+                                            <Show when={Boolean(getValue(rsvpForm, `users.${index()}.isComing`)) && !Boolean(get(props, `invite.users.${index()}.userId`))}>
                                                 <div class="mx-auto w-full max-w-[400px]">
                                                     <Field type="string" name={`users.${index()}.email`}>
-                                                        {(field, props) => (
-                                                            <GenericField {...props} type="email" value={field.value} error={field.error} label="Email address" placeholder="email@example.com" />
+                                                        {(field, fieldProps) => (
+                                                            <GenericField
+                                                                {...fieldProps}
+                                                                type="email"
+                                                                value={field.value}
+                                                                error={field.error}
+                                                                label="Email address"
+                                                                placeholder="email@example.com"
+                                                                disabled={props.isSubmitted}
+                                                            />
                                                         )}
                                                     </Field>
                                                 </div>

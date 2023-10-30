@@ -15,6 +15,7 @@ type GenericFieldProps = {
     onChange: JSX.EventHandler<HTMLInputElement, Event>;
     onBlur: JSX.EventHandler<HTMLInputElement, FocusEvent>;
     class?: string;
+    disabled?: boolean;
 };
 
 const GenericField: Component<GenericFieldProps> = (props) => {

@@ -30,7 +30,7 @@ const GenericInput = (props: GenericInputProps) => {
             class={twcx('w-full py-[12px] px-[20px] bg-white border border-[#CBCBCB] outline-none focus:border-[#D98E92]', props.class, {
                 'border-[#F11A41] focus:border-[#F11A41]': props.hasError,
                 'border-[#000]': !!props.value && !props.hasError,
-                'pointer-events-none': props.disabled,
+                'pointer-events-none border-[#dbdbdb] bg-[#F8F8F8] text-[#9E9E9E]': props.disabled,
             })}
             id={props.name}
             value={props.value || ''}

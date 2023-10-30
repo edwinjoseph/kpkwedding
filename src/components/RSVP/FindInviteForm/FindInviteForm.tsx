@@ -83,28 +83,28 @@ const FindInviteForm = (props: FindInviteFormProps) => {
             <div class="mx-auto my-[24px] max-w-[480px]">
                 <div class="flex gap-x-4">
                     <Field type="string" name="firstName">
-                        {(field, props) => (
+                        {(field, fieldProps) => (
                             <div class="flex-1">
                                 <GenericInput
-                                    {...props}
+                                    {...fieldProps}
                                     type="text"
                                     placeholder="First name"
                                     value={field.value}
-                                    hasError={field.error !== undefined}
+                                    hasError={Boolean(field.error)}
                                     required
                                 />
                             </div>
                         )}
                     </Field>
                     <Field type="string" name="lastName">
-                        {(field, props) => (
+                        {(field, fieldProps) => (
                             <div class="flex-1">
                                 <GenericInput
-                                    {...props}
+                                    {...fieldProps}
                                     type="text"
                                     placeholder="Last name"
                                     value={field.value}
-                                    hasError={field.error !== undefined}
+                                    hasError={Boolean(field.error)}
                                     required
                                 />
                             </div>

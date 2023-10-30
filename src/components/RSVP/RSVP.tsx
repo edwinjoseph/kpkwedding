@@ -4,7 +4,7 @@ import RSVPForm from '@components/RSVP/RSVPForm';
 import { ClientInvite } from '@lib/supabase/invites';
 
 const RSVP = (props: { isAuthenticated: boolean, invite: ClientInvite | null }) => {
-    let ref: Ref<HTMLElement>;
+    let ref: Ref<HTMLHeadingElement>;
 
     return (
         <Section>

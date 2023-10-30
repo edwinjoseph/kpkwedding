@@ -4,6 +4,10 @@ export const isRefHTMLElement = (value: Ref<HTMLElement> | undefined): value is 
     return Boolean(value) && !(value instanceof Function);
 }
 
+export const isRefHTMLHeadingElement = (value: Ref<HTMLHeadingElement> | undefined): value is HTMLHeadingElement => {
+    return Boolean(value) && !(value instanceof Function);
+}
+
 export const isRefHTMLButtonElement = (value: Ref<HTMLButtonElement> | undefined): value is HTMLButtonElement => {
     return Boolean(value) && !(value instanceof Function);
 }
