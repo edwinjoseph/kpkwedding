@@ -11,7 +11,7 @@ const Agenda = () => (
                 <AgendaItem subtitle="1pm" title="Pop the prosecco" />
                 <AgendaItem subtitle="2.30pm" title="All aboard the wedding bus" />
                 <AgendaItem subtitle="4.30pm" title="We feast" />
-                <AgendaItem subtitle="6:30pm" title="Put on your dancing shoes" />
+                <AgendaItem subtitle="6:30pm" title="Evening Celebrations" />
                 <AgendaItem subtitle="Midnight" title="We (regrettably) leave" />
             </div>
         </Section.Container>

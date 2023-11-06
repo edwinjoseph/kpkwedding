@@ -6,19 +6,39 @@ const FAQs = () => {
     const [activeAccordion, setActiveAccordion] = createSignal<string | null>(null);
     const questions = [
         {
+            title: 'Why are you getting married in an Asylum?',
+            content: [
+                'Not actually a psychiatric facility, the Asylum Chapel was established in 1827 as one of London’s largest almshouses. Long before the introduction of social housing, almshouses were charitable housing where residents were entitled to a small weekly cash payment & medical care.',
+                'The Asylum Chapel provided a safe home for elderly, retired pub landlords, reflected in the name ‘asylum’ which traditionally meant ‘sanctuary’.'
+            ]
+        },
+        {
+            title: 'When should I RSVP by?',
+            content: [
+                'To help with our planning please RSVP by May 1, 2024'
+            ]
+        },
+        {
             title: 'Is there a dress code?',
-            content: ['Yes, the dress code is summer formal. No jeans.']
+            content: ['Yes, the dress code is summer formal. That outfit you’ve been looking for an occasion to wear? This is the occasion. No jeans please!']
+        },
+        {
+            title: 'Can I bring my children?',
+            content: [
+                'We love your little ones as much as you do! However we are only able to accommodate the children of immediate family and hope you can enjoy a date night on us.'
+            ]
         },
         {
             title: 'Will Jackson be there?',
             content: ["We couldn't get married without him! Jackson will be there at the ceremony to give everyone a high-five, fist bump or handshake."]
         },
         {
-            title: 'Can I bring my children?',
-            content: [
-                'Unfortunately we are only able to accommodate the children of immediate family.',
-                'We hope you will understand our decision to make the wedding (mostly) child-free, and take the opportunity to celebrate in style!'
-            ]
+            title: 'Will there be an open bar?',
+            content: ['Sadly not but don’t worry the drinks will be flowing ']
+        },
+        {
+            title: 'Can I take photos during the ceremony?',
+            content: ['We ask that you please do not take photos *during* the ceremony as we want to see all your lovely faces! After that feel free to snap and share. ']
         },
         {
             title: 'Is there a gift registry?',
@@ -44,9 +64,9 @@ const FAQs = () => {
             ]
         },
         {
-            title: 'What is there to do in Peckham & Dulwich?',
+            title: 'What is there to do in the area?',
             content: [
-                'Here’s a few bits to get you started on a perfect weekend in South London!',
+                'Here’s a few bits to get you started on a perfect weekend in Peckham & Dulwich – our favourite part of London!',
                 '**Farmers markets:**',
                 '- [North Cross Road Saturday market](https://www.google.com/maps/search/?api=1&query=North+Cross+Road+Market) (East Dulwich)',
                 '- [Telegraph Hill market](https://www.google.com/maps/search/?api=1&query=Telegraph+Hill+Market)',

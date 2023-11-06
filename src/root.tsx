@@ -52,7 +52,6 @@ export default function Root() {
                     <ErrorBoundary fallback={(e: Error) => {
                         Sentry.captureException(e, {
                             level: 'error',
-
                         });
 
                         return (
