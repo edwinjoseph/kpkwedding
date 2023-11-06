@@ -118,6 +118,7 @@ const App = () => {
 
     return (
         <>
+            <script src="https://cdn.jsdelivr.net/npm/add-to-calendar-button@2" async defer />
             <header class={twcx('fixed top-0 z-10 w-full bg-white', {
                 'border-b': isHeaderFixed(),
             })}>

@@ -495,6 +495,7 @@ export const updateInvite = async (supabase: SupabaseClient<Database>, values: U
         if (inviteRes.data) {
             Promise.all(users.map(user => {
                 const existingUser = usersRes.data.find(dbUser => dbUser.id === user.id);
+
                 if (!existingUser || existingUser.is_coming === user.is_coming) {
                     return;
                 }

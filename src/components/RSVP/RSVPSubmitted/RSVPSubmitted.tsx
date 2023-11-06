@@ -1,7 +1,8 @@
 import { Show } from "solid-js";
 import { ClientInvite } from '@lib/supabase/invites';
-import Tick from './Tick.svg';
 import SubmitButton from '@components/SubmitButton';
+import AddCalendarEvent from '@components/RSVP/AddCalendarEvent';
+import Tick from './Tick.svg';
 
 const RSVPSubmitted = (props: { invite: ClientInvite, onChangeResponse: () => void; }) => {
     const users = props.invite.users.sort((a, b) => {
@@ -19,10 +20,6 @@ const RSVPSubmitted = (props: { invite: ClientInvite, onChangeResponse: () => vo
     const someAreComing = users.some(user => Boolean(user.isComing));
     const allAreComing = users.every(user => Boolean(user.isComing));
 
-    const handleAddToCalendar = () => {
-
-    }
-
     return (
         <>
             <Show when={someAreComing}>
@@ -32,11 +29,11 @@ const RSVPSubmitted = (props: { invite: ClientInvite, onChangeResponse: () => vo
             </Show>
             <div class="mt-10 text-lg">
                 <Show when={allAreComing}>
-                    <p>Thanks, we can’t wait to see you on the day!</p>
+                    <p>Thanks, we can’t wait to see {users.length === 2 ? 'you both' : 'you'} on the day!</p>
                     <p class="mt-4">Please check out our FAQs below if you have any questions.</p>
                 </Show>
                 <Show when={users.length === 2 && !allAreComing && someAreComing}>
-                    <p>We’re sorry that ${users[0].firstName} can’t come, but can’t wait to see you, ${users[1].firstName}!</p>
+                    <p>We’re sorry that {users[0].firstName} can’t come, but can’t wait to see you, {users[1].firstName}!</p>
                 </Show>
                 <Show when={!someAreComing && !allAreComing}>
                     <p>We’re sorry to miss you!</p>
@@ -47,7 +44,7 @@ const RSVPSubmitted = (props: { invite: ClientInvite, onChangeResponse: () => vo
             </div>
             <div class="mx-auto mt-10 flex max-w-[350px] flex-col gap-4">
                 <Show when={someAreComing}>
-                    <SubmitButton text="Add to calender" onClick={handleAddToCalendar} />
+                    <AddCalendarEvent invite={props.invite} />
                 </Show>
                 <SubmitButton text="Change response" onClick={props.onChangeResponse} alt={someAreComing} />
             </div>

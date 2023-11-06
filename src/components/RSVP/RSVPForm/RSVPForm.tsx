@@ -88,7 +88,7 @@ const RSVPForm = (props: { rsvpRef: Ref<HTMLHeadingElement>, isAuthenticated: bo
         let invitedTo = 'ceremony and reception, starting at midday at The Asylum Chapel';
 
         if (data.invitedTo === InvitedTo.RECEPTION) {
-            invitedTo = 'evening reception, starting at 19:00 at The Lordship Pub'
+            invitedTo = 'evening reception, starting at 18:30 at The Lordship Pub'
         }
 
         if (data.users.length === 2) {
