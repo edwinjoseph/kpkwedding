@@ -34,7 +34,7 @@ const FAQs = () => {
         },
         {
             title: 'Will there be an open bar?',
-            content: ['Sadly not but don’t worry the drinks will be flowing ']
+            content: ['Sadly not, but don’t worry the drinks will be flowing!']
         },
         {
             title: 'Can I take photos during the ceremony?',
