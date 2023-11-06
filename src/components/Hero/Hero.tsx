@@ -15,7 +15,7 @@ const Hero = (props: { ref: HTMLElement | ((el: HTMLElement) => void) | undefine
         if (ref) {
             const style = window.getComputedStyle(ref);
             window.scrollTo({
-                top: ref.getBoundingClientRect().height + parseInt(style.marginBottom.replace('px', '')),
+                top: ref.getBoundingClientRect().height + (parseInt(style.marginBottom.replace('px', '')) / 2),
                 left: 0,
                 behavior: 'smooth'
             })
