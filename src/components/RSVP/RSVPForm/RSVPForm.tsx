@@ -8,6 +8,7 @@ import LoginFlowForm from '@components/LoginFlowForm';
 import InviteResponseForm from '@components/RSVP/InviteResponseForm';
 import RSVPSubmitted from '@components/RSVP/RSVPSubmitted';
 import APIError from '@errors/APIError';
+import {scrollToElement} from '@utils/scroll-to-element';
 
 const RSVPForm = (props: { rsvp: Ref<HTMLElement>, isAuthenticated: boolean, invite: ClientInvite | null }) => {
     const [ searchParams, setSearchParams ] = useSearchParams();
@@ -19,14 +20,8 @@ const RSVPForm = (props: { rsvp: Ref<HTMLElement>, isAuthenticated: boolean, inv
 
     const handleScrollToTop = () => {
         if (isRefHTMLElement(props.rsvp)) {
-            const scrollPos = window.scrollY;
-            const style = window.getComputedStyle(props.rsvp);
-            const rsvpTopPos = props.rsvp.getBoundingClientRect().top - parseInt(style.marginTop.replace('px', ''));
-            const scrollToY = scrollPos + rsvpTopPos;
-
-            window.scrollTo({
-                top: scrollToY,
-                left: 0,
+            scrollToElement(props.rsvp, {
+                includeHeader: true,
             });
         }
     }
@@ -109,18 +104,23 @@ const RSVPForm = (props: { rsvp: Ref<HTMLElement>, isAuthenticated: boolean, inv
         setShowSubmission(props.invite && props.isAuthenticated);
 
         if (searchParams.email && props.invite && props.isAuthenticated && isRefHTMLElement(props.rsvp)) {
-            const scrollPos = window.scrollY;
-            const style = window.getComputedStyle(props.rsvp);
-            const rsvpTopPos = props.rsvp.getBoundingClientRect().top - parseInt(style.marginTop.replace('px', ''));
-            const scrollToY = scrollPos + rsvpTopPos;
-
             setSearchParams({
                 email: undefined
             });
 
-            window.scrollTo({
-                top: scrollToY,
-                left: 0,
+            let offset = 0;
+            const rsvpImage = props.rsvp.getElementsByTagName('img')[0];
+
+            if (rsvpImage) {
+                const style = window.getComputedStyle(rsvpImage);
+                offset = rsvpImage.getBoundingClientRect().height + (parseInt(style.marginBottom.replace('px', '')) * 1.5);
+            }
+
+            console.log(offset);
+
+            scrollToElement(props.rsvp, {
+                includeHeader: true,
+                offset: offset,
             });
         }
     });

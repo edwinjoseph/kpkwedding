@@ -8,6 +8,7 @@ import { LoginFormProps } from '@components/LoginForm/LoginForm';
 import { ErrorCodes } from '@utils/error-codes';
 import ErrorMessage from '@components/ErrorMessage';
 import APIError from '@errors/APIError';
+import {scrollToElement} from '@utils/scroll-to-element';
 
 interface LoginFlowFormProps {
     rsvp: Ref<HTMLElement>;
@@ -146,18 +147,21 @@ const LoginFlowForm = (props: LoginFlowFormProps) => {
             if (searchParams.email && isRefHTMLElement(props.rsvp)) {
                 await loginOTP(searchParams.email);
 
-                const scrollPos = window.scrollY;
-                const style = window.getComputedStyle(props.rsvp);
-                const rsvpTopPos = props.rsvp.getBoundingClientRect().top - parseInt(style.marginTop.replace('px', ''));
-                const scrollToY = scrollPos + rsvpTopPos;
-
                 setSearchParams({
                     email: undefined
                 });
 
-                window.scrollTo({
-                    top: scrollToY,
-                    left: 0,
+                let offset = 0;
+                const rsvpImage = props.rsvp.getElementsByTagName('img')[0];
+
+                if (rsvpImage) {
+                    const style = window.getComputedStyle(rsvpImage);
+                    offset = rsvpImage.getBoundingClientRect().height + (parseInt(style.marginBottom.replace('px', '')) * 1.5);
+                }
+
+                scrollToElement(props.rsvp, {
+                    includeHeader: true,
+                    offset: offset,
                 });
             }
         })();
