@@ -1,14 +1,16 @@
-import {createSignal, onMount, Show} from 'solid-js';
+import {createSignal, onMount, Ref, Show} from 'solid-js';
 import { useSearchParams } from 'solid-start';
 import OTPForm from '@components/OTPForm';
 import LoginForm from '@components/LoginForm';
 import getHost from '@utils/get-host';
+import { isRefHTMLElement } from '@utils/is-type';
 import { LoginFormProps } from '@components/LoginForm/LoginForm';
 import { ErrorCodes } from '@utils/error-codes';
 import ErrorMessage from '@components/ErrorMessage';
 import APIError from '@errors/APIError';
 
 interface LoginFlowFormProps {
+    rsvp: Ref<HTMLElement>;
     onEmailSubmit?: (email: string) => Promise<void> | void;
     onAuthorised?: (redirectUrl: string) => Promise<void> | void;
 }
@@ -16,7 +18,8 @@ interface LoginFlowFormProps {
 const LoginFlowForm = (props: LoginFlowFormProps) => {
     const [ searchParams ] = useSearchParams();
     const [ globalError, setGlobalError ] = createSignal<{ text: Array<string> } | null>(null);
-    const [ email, setEmail ] = createSignal<string | null>(null);
+    const [ submitted, setSubmitted ] = createSignal<boolean>(false);
+    const [ email, setEmail ] = createSignal<string | null>( searchParams.email || null);
     const [ showOPTForm, setShowOPTForm ] = createSignal<boolean>(false);
 
     const handleErrorCode = (errorCode: string) => {
@@ -55,6 +58,11 @@ const LoginFlowForm = (props: LoginFlowFormProps) => {
 
     async function loginOTP(email: string) {
         try {
+            if (submitted()) {
+                return;
+            }
+
+            setSubmitted(true);
             await props.onEmailSubmit?.(email);
 
             const response = await fetch(new URL('/api/auth/login', getHost()).toString(), {
@@ -83,8 +91,9 @@ const LoginFlowForm = (props: LoginFlowFormProps) => {
                 setFormError?.({ code: err.code });
                 return;
             }
-
             setFormError?.({ code: ErrorCodes.UNKNOWN});
+        } finally {
+            setSubmitted(false);
         }
     }
 
@@ -132,6 +141,26 @@ const LoginFlowForm = (props: LoginFlowFormProps) => {
         if (searchParams.error) {
             handleErrorCode(searchParams.error);
         }
+
+        (async () => {
+            if (searchParams.email && isRefHTMLElement(props.rsvp)) {
+                await loginOTP(searchParams.email);
+
+                const scrollPos = window.scrollY;
+                const style = window.getComputedStyle(props.rsvp);
+                const rsvpTopPos = props.rsvp.getBoundingClientRect().top - parseInt(style.marginTop.replace('px', ''));
+                const scrollToY = scrollPos + rsvpTopPos;
+
+                setSearchParams({
+                    email: undefined
+                });
+
+                window.scrollTo({
+                    top: scrollToY,
+                    left: 0,
+                });
+            }
+        })();
     })
 
     return (

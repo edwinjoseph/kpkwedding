@@ -1,7 +1,7 @@
 import { createEffect, createSignal, Ref, Show } from 'solid-js';
-import { refetchRouteData } from 'solid-start';
+import { refetchRouteData, useSearchParams } from 'solid-start';
 import { ClientInvite, InvitedTo } from '@lib/supabase/invites';
-import {isRefHTMLHeadingElement} from '@utils/is-type';
+import { isRefHTMLElement } from '@utils/is-type';
 import { verifyInvite } from '@handlers/invites';
 import FindInviteForm, { FindInviteFormProps, FindInviteFormType } from '@components/RSVP/FindInviteForm';
 import LoginFlowForm from '@components/LoginFlowForm';
@@ -9,17 +9,23 @@ import InviteResponseForm from '@components/RSVP/InviteResponseForm';
 import RSVPSubmitted from '@components/RSVP/RSVPSubmitted';
 import APIError from '@errors/APIError';
 
-const RSVPForm = (props: { rsvpRef: Ref<HTMLHeadingElement>, isAuthenticated: boolean, invite: ClientInvite | null }) => {
-    const [ findInviteData, setFindInviteData ] = createSignal<FindInviteFormType | null>(null)
+const RSVPForm = (props: { rsvp: Ref<HTMLElement>, isAuthenticated: boolean, invite: ClientInvite | null }) => {
+    const [ searchParams, setSearchParams ] = useSearchParams();
+    const [ findInviteData, setFindInviteData ] = createSignal<FindInviteFormType | null>(null);
     const [ invite, setInvite ] = createSignal<ClientInvite | null>(props.invite || null);
-    const [ shouldLogin, setShouldLogin ] = createSignal(false);
+    const [ shouldLogin, setShouldLogin ] = createSignal(Boolean(searchParams.email));
     const [ isSubmitted, setIsSubmitted ] = createSignal(false);
     const [ showSubmission, setShowSubmission ] = createSignal(props.invite && props.isAuthenticated);
 
     const handleScrollToTop = () => {
-        if (isRefHTMLHeadingElement(props.rsvpRef)) {
+        if (isRefHTMLElement(props.rsvp)) {
+            const scrollPos = window.scrollY;
+            const style = window.getComputedStyle(props.rsvp);
+            const rsvpTopPos = props.rsvp.getBoundingClientRect().top - parseInt(style.marginTop.replace('px', ''));
+            const scrollToY = scrollPos + rsvpTopPos;
+
             window.scrollTo({
-                top: props.rsvpRef.offsetTop - 120,
+                top: scrollToY,
                 left: 0,
             });
         }
@@ -101,7 +107,23 @@ const RSVPForm = (props: { rsvpRef: Ref<HTMLHeadingElement>, isAuthenticated: bo
     createEffect(() => {
         setInvite(props.invite);
         setShowSubmission(props.invite && props.isAuthenticated);
-    })
+
+        if (searchParams.email && props.invite && props.isAuthenticated && isRefHTMLElement(props.rsvp)) {
+            const scrollPos = window.scrollY;
+            const style = window.getComputedStyle(props.rsvp);
+            const rsvpTopPos = props.rsvp.getBoundingClientRect().top - parseInt(style.marginTop.replace('px', ''));
+            const scrollToY = scrollPos + rsvpTopPos;
+
+            setSearchParams({
+                email: undefined
+            });
+
+            window.scrollTo({
+                top: scrollToY,
+                left: 0,
+            });
+        }
+    });
 
     return (
         <div class="mx-auto max-w-[600px] text-center">
@@ -112,7 +134,7 @@ const RSVPForm = (props: { rsvpRef: Ref<HTMLHeadingElement>, isAuthenticated: bo
                 <h3 class="mb-[24px] text-[18px] font-bold md:text-[24px]">Your invitation</h3>
                 <p class="mb-[24px] md:text-[18px]">Welcome back! To edit your RSVP you will need to sign in.</p>
                 <div class="mx-auto max-w-[400px]">
-                    <LoginFlowForm onEmailSubmit={handleEmailSubmitted} onAuthorised={handleAuthorised} />
+                    <LoginFlowForm rsvp={props.rsvp} email={searchParams.email} onEmailSubmit={handleEmailSubmitted} onAuthorised={handleAuthorised} />
                 </div>
             </Show>
             <Show when={invite() !== null && !showSubmission()}>
