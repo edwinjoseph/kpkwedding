@@ -203,8 +203,8 @@ export const getInvite = async (supabase: SupabaseClient<Database>, values: GetI
         user = await supabase.schema('rsvp')
             .from('users')
             .select('*')
-            .eq('first_name', values.firstName)
-            .eq('last_name', values.lastName)
+            .ilike('first_name', `${values.firstName.toLowerCase()}`)
+            .ilike('last_name', `${values.lastName.toLowerCase()}`)
             .limit(1)
             .single();
     }
@@ -295,11 +295,11 @@ export const getInvite = async (supabase: SupabaseClient<Database>, values: GetI
     const invite = buildInvite(inviteRes.data, usersRes.data, responsesRes.data, authUserRes.data.users)
 
     const users = invite.users.sort((a, b) => {
-        if (a.first_name === user?.data!.first_name && a.last_name === user?.data!.last_name) {
+        if (a.first_name.toLowerCase() === user?.data!.first_name.toLowerCase() && a.last_name.toLowerCase() === user?.data!.last_name.toLowerCase()) {
             return -1;
         }
 
-        if (b.first_name === user?.data!.first_name && b.last_name === user?.data!.last_name) {
+        if (b.first_name.toLowerCase() === user?.data!.first_name.toLowerCase() && b.last_name.toLowerCase() === user?.data!.last_name.toLowerCase()) {
             return 1;
         }
 
@@ -316,8 +316,8 @@ export const verifyInvite = async (supabase: SupabaseClient<Database>, values: V
     const user = await supabase.schema('rsvp')
         .from('users')
         .select('*')
-        .eq('first_name', values.firstName)
-        .eq('last_name', values.lastName)
+        .ilike('first_name', `${values.firstName.toLowerCase()}`)
+        .ilike('last_name', `${values.lastName.toLowerCase()}`)
         .limit(1)
         .single();
 
