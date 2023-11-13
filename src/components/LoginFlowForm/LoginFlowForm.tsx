@@ -17,7 +17,7 @@ interface LoginFlowFormProps {
 }
 
 const LoginFlowForm = (props: LoginFlowFormProps) => {
-    const [ searchParams ] = useSearchParams();
+    const [ searchParams, setSearchParams ] = useSearchParams();
     const [ globalError, setGlobalError ] = createSignal<{ text: Array<string> } | null>(null);
     const [ submitted, setSubmitted ] = createSignal<boolean>(false);
     const [ email, setEmail ] = createSignal<string | null>( searchParams.email || null);
