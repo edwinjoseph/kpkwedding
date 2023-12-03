@@ -41,6 +41,7 @@ export default function Root() {
                 <Meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <Meta name="theme-color" content="#FFFFFF"/>
                 <Meta name="referrer" content={new URL(location.pathname, getHost()).toString()} />
+                <Meta property="og:image" content="/preview.jpg" />
                 <Link rel="preconnect" href="https://fonts.googleapis.com"/>
                 <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
                 <Link
