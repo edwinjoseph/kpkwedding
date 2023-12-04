@@ -17,7 +17,7 @@ const LearnMoreIcon = (props: LearnMoreIconProps) => {
                 "
             />
             <g class="origin-center motion-safe:animate-spin-slow">
-                <text>
+                <text textLength={Math.floor(Math.PI * 90 - text.length)}>
                     <textPath
                         href="#circlePath"
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

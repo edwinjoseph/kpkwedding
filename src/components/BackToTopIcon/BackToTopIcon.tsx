@@ -17,14 +17,14 @@ const BackToTopIcon = (props: BackToTopIconProps) => {
             "
             />
             <g class="origin-center motion-safe:animate-spin-slow">
-                <text>
-                    {[...new Array(2)].map((_, index) => (
+                {[...new Array(2)].map((_, index) => (
+                    <text textLength={Math.floor(Math.PI * 45 - text.length)}>
                         <textPath
                             href="#circlePath"
                             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                             // @ts-ignore
                             textLength={Math.floor(Math.PI * 45 - text.length)}
-                            startOffset={Math.floor(Math.PI * 45) * index}
+                            startOffset={Math.floor(Math.PI * 45) * index + 15}
                             font-family="Montserrat"
                             font-size="16"
                             font-weight="bold"
@@ -32,8 +32,8 @@ const BackToTopIcon = (props: BackToTopIconProps) => {
                             fill="#555555">
                             {text}
                         </textPath>
-                    ))}
-                </text>
+                    </text>
+                ))}
             </g>
             <path d="M74.5 60L60 75L45.5 60" stroke="black" transform="rotate(180 60 60)" stroke-width="4"/>
             <rect x="58.5" y="48" width="3" height="25" fill="black" stroke="black"/>
