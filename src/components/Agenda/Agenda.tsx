@@ -10,7 +10,7 @@ const Agenda = () => (
                 <AgendaItem subtitle="12.30pm" title="“We do”" />
                 <AgendaItem subtitle="1pm" title="Pop the prosecco" />
                 <AgendaItem subtitle="2.30pm" title="All aboard the wedding bus" />
-                <AgendaItem subtitle="3pm" title="Cocktails & canapes at The Lordship Pub" />
+                <AgendaItem subtitle="3pm" title="Cocktails &amp; canapes at The Lordship Pub" />
                 <AgendaItem subtitle="6:30pm" title="Evening celebrations" />
                 <AgendaItem subtitle="Midnight" title="We (regrettably) leave" />
             </div>
