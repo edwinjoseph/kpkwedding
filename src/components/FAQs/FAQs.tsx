@@ -44,7 +44,9 @@ const FAQs = () => {
             title: 'Is there a gift registry?',
             content: [
                 'After over a decade together all we really want is all our friends and family present to celebrate with us.',
-                'However, if you would like to gift us an experience for our honeymoon in Bali, you can do so [here](https://withjoy.com/kezia-and-james-eclm3mihbj000101xx5gyaesfss/registry)'
+                'However, if you would like to gift us an experience for our honeymoon in Bali, you can do so [here](https://withjoy.com/kezia-and-james-eclm3mihbj000101xx5gyaesfss/registry)',
+                'The honeymoon fund is set up to avoid any charges to guests.',
+                'The initial page is in US dollar but it will redirect you to PayPal where you can gift in Pound Sterling.'
             ]
         },
         {
