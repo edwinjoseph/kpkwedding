@@ -74,7 +74,7 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email ?? undefined,
-                userId: user.userId,
+                userId: user.userId ?? undefined,
                 isComing: user.isComing?.toString(),
                 isVegan: Boolean(user?.isVegan),
                 isVegetarian: Boolean(user?.isVegetarian),
