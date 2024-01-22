@@ -13,7 +13,7 @@ class EmailClient {
     }
 
     static async sendIndividualEmail(
-        to: { email: string; name: string },
+        contact: { email: string; userId: string; firstName: string; lastName: string },
         template: EmailTemplate,
         options?: {
             params?: Record<string, unknown>;
@@ -21,9 +21,42 @@ class EmailClient {
         }
     ) {
         try {
+            const foundContact = await fetch(`https://api.brevo.com/v3/contacts/${contact.email}`, {
+                headers: {
+                    'api-key': this._apiKey.apiKey
+                }
+            }).then(res => res.json());
+
+            if (foundContact.code && foundContact.code === 'document_not_found') {
+                await fetch(`https://api.brevo.com/v3/contacts`, {
+                    method: 'POST',
+                    headers: {
+                        accept: 'application/json',
+                        'content-type': 'application/json',
+                        'api-key': this._apiKey.apiKey
+                    },
+                    body: JSON.stringify({
+                        email: contact.email,
+                        ext_id: contact.userId,
+                        attributes: {
+                            FIRSTNAME: contact.firstName,
+                            LASTNAME: contact.lastName
+                        },
+                        listIds: [8],
+                        emailBlacklisted: false,
+                        smsBlacklisted: true,
+                        updateEnabled: false,
+                        smtpBlacklistSender: []
+                    })
+                }).then(res => res.json());
+            }
+
             return this.api.sendTransacEmail({
                 templateId: template,
-                to: [to],
+                to: [{
+                    email: contact.email,
+                    name: `${contact.firstName} ${contact.lastName}`
+                }],
                 params: options?.params,
             });
         } catch (err) {

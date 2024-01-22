@@ -504,7 +504,9 @@ export const updateInvite = async (supabase: SupabaseClient<Database>, values: U
                 return EmailClient.sendIndividualEmail(
                     {
                         email: user.email!,
-                        name: `${user.first_name} ${user.last_name}`,
+                        userId: user.user_id,
+                        firstName: user.first_name,
+                        lastName: user.last_name,
                     },
                     user.is_coming ? EmailTemplate.RSVP_IS_COMING : EmailTemplate.RSVP_IS_NOT_COMING,
                     {
