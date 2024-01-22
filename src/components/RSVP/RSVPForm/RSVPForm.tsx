@@ -8,7 +8,7 @@ import LoginFlowForm from '@components/LoginFlowForm';
 import InviteResponseForm from '@components/RSVP/InviteResponseForm';
 import RSVPSubmitted from '@components/RSVP/RSVPSubmitted';
 import APIError from '@errors/APIError';
-import {scrollToElement} from '@utils/scroll-to-element';
+import { scrollToElement } from '@utils/scroll-to-element';
 
 const RSVPForm = (props: { rsvp: Ref<HTMLElement>, isAuthenticated: boolean, invite: ClientInvite | null }) => {
     const [ searchParams, setSearchParams ] = useSearchParams();
@@ -31,9 +31,27 @@ const RSVPForm = (props: { rsvp: Ref<HTMLElement>, isAuthenticated: boolean, inv
         handleScrollToTop();
     }
 
+    const updateInvite = (newInvite: ClientInvite | null) => {
+        if (!newInvite) {
+            return;
+        }
+
+        setInvite((oldInvite) => ({
+            ...(oldInvite || {}),
+            ...newInvite,
+            users: newInvite.users.map(user => {
+                const oldUser = oldInvite?.users?.find(oldUser => oldUser.email === user.email) || {};
+                return {
+                    ...oldUser,
+                    ...user,
+                }
+            })
+        }))
+    }
+
     const handleFoundInvite: FindInviteFormProps['onFound'] = (invite) => {
         if (invite) {
-            setInvite(invite);
+            updateInvite(invite);
             handleScrollToTop();
         }
     }
@@ -72,7 +90,7 @@ const RSVPForm = (props: { rsvp: Ref<HTMLElement>, isAuthenticated: boolean, inv
     }
 
     const handleOnSubmission = (invite: ClientInvite) => {
-        setInvite(invite);
+        updateInvite(invite);
         setShowSubmission(true);
         setIsSubmitted(true);
         handleScrollToTop();
@@ -100,7 +118,7 @@ const RSVPForm = (props: { rsvp: Ref<HTMLElement>, isAuthenticated: boolean, inv
     }
 
     createEffect(() => {
-        setInvite(props.invite);
+        updateInvite(props.invite);
         setShowSubmission(props.invite && props.isAuthenticated);
 
         if (searchParams.email && props.invite && props.isAuthenticated && isRefHTMLElement(props.rsvp)) {
@@ -115,8 +133,6 @@ const RSVPForm = (props: { rsvp: Ref<HTMLElement>, isAuthenticated: boolean, inv
                 const style = window.getComputedStyle(rsvpImage);
                 offset = rsvpImage.getBoundingClientRect().height + (parseInt(style.marginBottom.replace('px', '')) * 1.5);
             }
-
-            console.log(offset);
 
             scrollToElement(props.rsvp, {
                 includeHeader: true,

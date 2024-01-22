@@ -12,6 +12,7 @@ import GenericField from '@components/GenericField';
 const RSVPSchema = z.object({
     users: z.array(
         z.object({
+            id: z.string(),
             firstName: z.string(),
             lastName: z.string(),
             email: z.string().email({ message: "Please provide a valid email address" }).optional(),
@@ -69,10 +70,11 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
         validate: zodForm(RSVPSchema),
         initialValues: {
             users: props.invite.users.map((user) => ({
+                id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email ?? undefined,
-                userId: user.id,
+                userId: user.userId,
                 isComing: user.isComing?.toString(),
                 isVegan: Boolean(user?.isVegan),
                 isVegetarian: Boolean(user?.isVegetarian),
@@ -89,7 +91,8 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
         const users = values.users!.map(user => ({
             firstName: user.firstName,
             lastName: user.lastName,
-            id: user.userId,
+            id: user.id,
+            userId: user.userId,
             email: user.email,
             isComing: user.isComing === 'true',
             isVegan: user.isVegan,
@@ -131,6 +134,32 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                     return (
                                         <div class="grid gap-[24px]">
                                             <div>
+                                                <Field type="string" name={`users.${index()}.id`}>
+                                                    {(field, fieldProps) => (
+                                                        <input
+                                                            {...fieldProps}
+                                                            type="hidden"
+                                                            value={field.value}
+                                                        />
+                                                    )}
+                                                </Field>
+                                                <Field type="string" name={`users.${index()}.email`}>
+                                                    {(field, fieldProps) => (
+                                                        <input
+                                                            {...fieldProps}
+                                                            type="hidden"
+                                                            value={field.value}
+                                                        />
+                                                    )}
+                                                </Field>
+                                                <Field
+                                                    type="string"
+                                                    name={`users.${index()}.userId`}
+                                                >
+                                                    {(field, fieldProps) => (
+                                                        <input type="hidden" {...fieldProps} name={field.name} value={field.value}  />
+                                                    )}
+                                                </Field>
                                                 <Field
                                                     type="string"
                                                     name={`users.${index()}.firstName`}
@@ -142,14 +171,6 @@ const InviteResponseForm = (props: InviteResponseFormProps) => {
                                                 <Field
                                                     type="string"
                                                     name={`users.${index()}.lastName`}
-                                                >
-                                                    {(field, fieldProps) => (
-                                                        <input type="hidden" {...fieldProps} name={field.name} value={field.value}  />
-                                                    )}
-                                                </Field>
-                                                <Field
-                                                    type="string"
-                                                    name={`users.${index()}.userId`}
                                                 >
                                                     {(field, fieldProps) => (
                                                         <input type="hidden" {...fieldProps} name={field.name} value={field.value}  />

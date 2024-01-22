@@ -39,9 +39,10 @@ export type ReturnDBUser = {
 }
 
 export type ClientUser = {
+    id: string;
     firstName: string;
     lastName: string;
-    id?: string;
+    userId?: string;
     email?: string | null;
     isComing?: boolean;
     isVegan?: boolean;
@@ -514,7 +515,11 @@ export const updateInvite = async (supabase: SupabaseClient<Database>, values: U
                         }
                     }
                 );
-            })).then(() => {}).catch(() => {});
+            })).then((res) => {
+                console.info('email success', res);
+            }).catch((err) => {
+                console.error('email failure', err);
+            });
         }
     } catch (err) {
         console.error(err);
